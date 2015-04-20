@@ -1,0 +1,36 @@
+@media print
+{
+    @page { size: landscape; }
+
+    .only-print, .only-print *
+    {
+        display: block !important;
+    }
+    
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+    
+    svg:not(:root)
+    {
+        overflow: visible !important;
+    }
+    
+    div#main
+    {
+        display: inline;
+    }
+    
+    .print-report
+    {
+        display: block !important;
+    }
+    
+    .print-report:not(:first-child) .only-print h5
+    {
+        page-break-before: always;
+        padding-top: 90px;
+    }
+}
+
