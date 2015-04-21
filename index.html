@@ -1,5 +1,5 @@
 <!--
- * index.html
+ * home.html
  *
  * csvToGraphs - Project
  *
@@ -22,23 +22,22 @@
         <link href="./css/bootstrap-theme.css" rel="stylesheet" type="text/css" />
         <link href="./css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" />
         <link href="./css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+        <link href="./css/csvtographs.css" rel="stylesheet" type="text/css" />
         <link href="./css/charts.css" rel="stylesheet" type="text/css" />
     	<link href="./css/plot.css" rel="stylesheet" type="text/css" />
-        <link href="./css/navmenu.css" rel="stylesheet" type="text/css" />
         <link href="./css/print.css" rel="stylesheet" type="text/css" />
 
         <script src="./js/jquery-1.11.2.min.js" type="text/javascript"></script>
         <script src="./js/jquery-ui.min.js" type="text/javascript"></script>
         <script src="./js/bootstrap.js" type="text/javascript"></script>
-    	<script src="./js/underscore.js" type="text/javascript"></script>
-    	<script src="./js/underscore.math.js" type="text/javascript"></script>
         <script src="./js/randomColor.min.js" type="text/javascript"></script>
 		<script src="./js/d3.v3.js" type="text/javascript"></script>
 		<script src="./js/box.js" type="text/javascript"></script>
-        <script src='./js/persist-min.js' type='text/javascript'></script>
         <script src="./js/dashboard.js" type="text/javascript"></script>
         <script src="./js/drawCharts.js" type="text/javascript"></script>
         <script src="./js/jquery.PrintArea.js" type="text/javascript"></script>
+        
+        <script src="./js/controlChart.js" type="text/javascript"></script>
 
     	<style type="text/css">
 		</style>
@@ -54,48 +53,36 @@
             // ga('create', 'UA-61853517-1', 'auto');
             // ga('send', 'pageview');
       </script>
-      <div id="#main">
-        <span id="hidden-span" style="display:none;"></span>
-        <div id="print-area"></div>
-<!-- Nav Bar Start -->
-        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div id="navbar-container" class="container-fluid">
-                <div class="collapse navbar-collapse">
-                    <a class="navbar-brand" href="#">
-                        <img id="navbar-brand-image" src="./img/NeoQIC_icon_126_59.gif" height="59" width="126" />
-                    </a>
-                    <ul id="navbar-items" class="nav navbar-nav">
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">My Hospital Report</a></li>
-                        <li><a href="#">State Report</a></li>
-                        <li><a href="#">Customizable Charts</a></li>
-                        <li class="selected"><a href="#">Help</a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <div class="btn-group">
-                            <button id="print-page" type="button" class="print-btn btn btn-primary" href="#">Print Page</button>
-                            <button id="print-report" type="button" class="print-btn btn btn-primary" href="#">Print Report</button>
-                        </div>
-                    </ul>
-                </div> 
-            </div>     
+      <div id="main">
+<!-- Nav Bar -->
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">CSV RepGen</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#">Help</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <button id="print-page-btn" class="btn btn-primary">Print</button>
+                </ul>
+            </div>
         </nav>
-<!-- Nav Bar End -->
+<!-- /Nav Bar -->
 
-<!-- Help Tab Start -->
-        <div id="help-tab" class="container tab" style="margin-bottom: 10px;">
+<!-- Help Tab -->
+        <div id="help-tab" class="container tab" style="display: none;">
             <div class="row">
                 <div class="col-md-12">
-                    <br />
                     <ul id="help-nav" class="nav nav-tabs nav-justified">
                         <li class="active"><a href="#">Getting Started</a></li>
                         <li><a href="#">Charts and Graphs</a></li>
-                        <li><a href="#">Customize Page</a></li>
                         <li><a href="#">FAQs / Troubleshooting</a></li>
                     </ul>
                 </div>
             </div>
-            <div id="help-nav-tabs" class="print-container">
+            <div id="help-nav-tabs">
                 <div id="help-gstart-tab">
                     <div class="row">
                         <br />
@@ -103,9 +90,10 @@
                             <div class="well well-sm">
                                 <a onclick="$(document).scrollTop($('#h4-gstart').offset().top - 75); return false;" href="#">Getting Started</a> <br />
                                 <a onclick="$(document).scrollTop($('#h4-data').offset().top - 75); return false;" href="#">Selecting a Data File</a> <br />
-                                <a onclick="$(document).scrollTop($('#h4-hid').offset().top - 75); return false;" href="#">Choosing a Hospital ID</a> <br />
-                                <a onclick="$(document).scrollTop($('#h4-date').offset().top -75); return false;" href="#">Selecting a Date Range</a> <br />
-                                <a onclick="$(document).scrollTop($('#h4-reports').offset().top -75); return false;" href="#">Creating the Reports</a>
+                                <a onclick="$(document).scrollTop($('#h4-ctype').offset().top - 75); return false;" href="#">Choosing a Chart Type</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-mult-select').offset().top -75); return false;" href="#">Selecting Labels or Groups</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-labels').offset().top -75); return false;" href="#">Setting the Chart Title and Axis Labels</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-chart').offset().top -75); return false;" href="#">Creating the Charts</a>
                             </div>
                         </div>
                     </div>
@@ -115,7 +103,9 @@
                             <h4 id="h4-gstart">Getting Started</h4>
                             <p>This web application is optimized to work with Google Chrome.</p>
                             <p>This will not work in Internet Explorer!</p>
-                            <p>Before you can use the reporting tool of this dashboard, ensure you have a .CSV file that has been exported from RedCAP (with labels)</p>
+                            <p>Before you can, ensure you have a .CSV file in the proper format.</p>
+                            <br />
+                            <a href="./data/VON_DATA.csv">Here is a link to a sample data file.</a>
                         </div>
                         <div class="col-md-6">
                             <div class="row" style="display: inline">
@@ -157,238 +147,140 @@
                     <hr />
                     <div class="row">
                         <div class="col-md-6">
-                            <h4 id="h4-hid">Choosing a Hospital ID</h4>
-                            <p>Select your hospital from the Drop-Down menu.</p>
+                            <h4 id="h4-ctype">Choosing a Chart Type</h4>
+                            <p>You have the option of creating a Funnel Chart or a Control Chart by choosing an item from the highlighted dropdown menu.</p>
                         </div>
                         <div class="col-md-6">
-                            <img src="./img/help_hid.png" />
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4 id="h4-date">Selecting a Date Range</h4>
-                            <p>Choose a Start Date and End Date for the reports to be created.</p>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="./img/help_date.png" />
+                            <img src="./img/help_ctype.png" />
                         </div>
                     </div>
                     <hr />
                     <div class="row">
                         <div class="col-md-6">
-                            <h4 id="h4-reports">Creating the Reports</h4>
-                            <p>After you have selected a hospital and date range, click 'Submit' button to generate the Hospital Report and State Report.</p>
+                            <h4 id="h4-mult-select">Selecting Labels (or Groups)</h4>
+                            <p>Select the column which contains the X Axis Labels.</p>
+                            <p>You can choose to show data for all items in the X Axis, or just the ones you specify.</p>
+                            <br />
+                            <p>The same selection method applies for sorting data into groups</p>
                         </div>
                         <div class="col-md-6">
-                            <img src="./img/help_submit.png" />
+                            <img src="./img/help_mult_select.png" />
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-labels">Setting the Chart Title and Axis Labels</h4>
+                            <p>Change the first highlighted input to set your Chart Title</p>
+                            <p>The next two highlighted inputs will set the X- and Y-Axis labels, respectively.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="./img/help_labels.png" />
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-chart">Creating the Charts</h4>
+                            <p>Click the large blue button to create the chart!</p>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="./img/help_create_chart.png" />
                         </div>
                     </div>
                     <hr />
                     <div class="row">
                         <div class="col-md-12">
                             <h2 style="text-align: center;">
-                                <a href="#" onclick="$('#help-nav li:nth-child(2) a').click(); window.scrollTo(0,0); return false;">Click here to go to the 'Charts and Graphs' section'</a>
+                                <a href="#" onclick="$('#help-nav li:nth-child(2) a').click(); window.scrollTo(0,0); return false;">Click here to go to the 'Charts and Graphs' section</a>
                             </h2>
                         </div>
                     </div>
                 </div>
-                <div id="help-charts-tab">
+                <div id="help-charts-tab" style="display: none;">
                     <div class="row">
-                        <br />
+                        <br>
                         <div class="col-md-12">
                             <div class="well well-sm">
-                                <a onclick="$(document).scrollTop($('#h4-control-chart').offset().top - 75); return false;" href="#">Control Charts</a> <br />
-                                <a onclick="$(document).scrollTop($('#h4-funnel-plot').offset().top - 75); return false;" href="#">Funnel Plots</a> <br />
-                                <a onclick="$(document).scrollTop($('#h4-tooltip').offset().top -75); return false;" href="#">Tool Tips</a> <br />
-                                <a onclick="$(document).scrollTop($('#h4-toggle-date').offset().top -75); return false;" href="#">Toggle Date Range</a>
+                                <a onclick="$(document).scrollTop($('#h4-control-chart').offset().top - 75); return false;" href="#">Control Charts</a> <br>
+                                <a onclick="$(document).scrollTop($('#h4-funnel-plot').offset().top - 75); return false;" href="#">Funnel Plots</a> <br>
+                                <a onclick="$(document).scrollTop($('#h4-tooltip').offset().top -75); return false;" href="#">Tool Tips</a> <br>
                             </div>
                         </div>
                     </div>
-                    <hr />
+                    <hr>
                     <div class="row">
                         <div class="col-md-6">
                             <h4 id="h4-control-chart">Control Charts</h4>
                             <p>The <strong>mean</strong> is the green center line.</p>
-                            <p>The <strong>control limits</strong> (dashed lines) are 3&sigma; away from the mean.</p>
+                            <p>The <strong>control limits</strong> (dashed lines) are 3σ away from the mean.</p>
                             <p>Data points that fall outside the control limits are colored red.</p>
-                            <br />
+                            <br>
                             <p>Placing your cursor over any data point or center line will reveal a <a onclick="$(document).scrollTop($('#h4-tooltip').offset().top - 75); return false;" class="a-tooltip" href="#">tooltip</a></p>
                         </div>
                         <div class="col-md-6">
-                            <img src="./img/help_run.png" />
+                            <img src="./img/help_control.png">
                         </div>
                     </div>
-                    <hr />
+                    <hr>
                     <div class="row">
                         <div class="col-md-6">
                             <h4 id="h4-funnel-plot">Funnel Plots</h4>
                             <p>The <strong>mean</strong> is the green center line.</p>
-                            <p>The <strong>inner control limits</strong> (with long dashed lines) are 2&sigma; away from the mean.</p>
-                            <p>The <strong>outer control limits</strong> (with short dashed lines) are 3&sigma; away from the mean.</p>
-                            <br />
-                            <p>The orange data point represents your hospital.</p>
-                            <br />
+                            <p>The <strong>inner control limits</strong> (with long dashed lines) represent the 99.9 % confidence interval.</p>
+                            <p>The <strong>outer control limits</strong> (with short dashed lines)represent the 95 % confidence interval.</p>
+                            <br>
                             <p>Placing your cursor over any data point or center line will reveal a <a onclick="$(document).scrollTop($('#h4-tooltip').offset().top - 75); return false;" class="a-tooltip" href="#">tooltip</a></p>
                         </div>
                         <div class="col-md-6">
-                            <img src="./img/help_funnel.png" />
+                            <img src="./img/help_funnel.png">
                         </div>
                     </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4 id="h4-box-plot">Box and Whisker Plots</h4>
-                            <p>The <strong>median</strong> is the thin black center line in each box.</p>
-                            <p>The <strong>quartile ranges</strong> (or whiskers) are represented by the dashed lines above and below each box.</p>
-                            <p>Any <strong>outliers</strong> are shown as empty circles in the same column as each box.</p>
-                            <br />
-                            <p>The maximum and minimum of each range is indicated at the top and bottom of each box.</p>
-                            <p>The maximum and minimum of each quartile range is indicated at the top and bottom of each whisker.</p>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="./img/help_box.png" />
-                        </div>
-                    </div>
-                    <hr />
+                    <hr>
                     <div class="row">
                         <div class="col-md-6">
                             <h4 id="h4-tooltip">Tool Tips</h4>
                             <p>Placing your cursor over any data point or center line will reveal additional data for that point.</p>
                         </div>
                         <div class="col-md-6">
-                            <img src="./img/help_charts_tooltip.png" />
+                            <img src="./img/help_charts_tooltip.png">
                         </div>
                     </div>
-                    <hr />
+                    <hr>
                     <div class="row">
-                        <div class="col-md-6">
-                            <h4 id="h4-toggle-date">Toggle Date Range</h4>
-                            <p>Change the 'Start Date' and 'End Date' fields then click 'Refresh' to draw the chart with a new date range</p>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="./img/help_charts_date.png" />
+                        <div class="col-md-12">
+                            <h2 style="text-align: center;">
+                                <a href="#" onclick="$('#help-nav li:nth-child(3) a').click(); window.scrollTo(0,0); return false;">Click here to go to the 'FAQs / Troubleshooting' section</a>
+                            </h2>
                         </div>
                     </div>
                 </div>
-                <div id="help-customize-tab">
+                <div id="help-faqs-tab" style="display: none;">
                     <div class="row">
                         <br />
                         <div class="col-md-12">
                             <div class="well well-sm">
-                                <a onclick="$(document).scrollTop($('#h4-chart-types').offset().top - 75); return false;" href="#">Chart Types</a> <br />
-                                <a onclick="$(document).scrollTop($('#h4-axes').offset().top - 75); return false;" href="#">X- and Y-Axis Variables</a> <br />
-                                <a onclick="$(document).scrollTop($('#h4-chart-labels').offset().top -75); return false;" href="#">Chart Labels</a> <br />
-                                <a onclick="$(document).scrollTop($('#h4-chart-labels').offset().top -75); return false;" href="#">Create Charts</a>
-                            </div>
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4 id="h4-chart-types">Chart Types</h4>
-                            <p>Selecting a chart type from the first drop down will populate the X and Y variable drop downs.</p>
-                            <p>There are three types of charts:</p>
-                            <ul>
-                                <li><p>Control Charts</p></li>
-                                <li><p>Box and Whisker Plots</p></li>
-                                <li><p>Funnel Plots</p></li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="./img/help_chart_types.png" />
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4 id="h4-axes">X- and Y-Axis Variables</h4>
-                            <p>The center drop down selects your Y-Axis variable.</p>
-                            <p>The right-most drop down selects your X-Axis variable.</p>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="./img/help_axes.png" />
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4 id="h4-chart-labels">Chart Labels</h4>
-                            <p>Fill in the leftmost text box to set the <strong>Chart Title</strong></p>
-                            <p>Fill in the center text box to set the <strong>Y-Axis Label</strong></p>
-                            <p>Fill in the rightmost text box to set the <strong>X-Axis Label</strong></p>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="./img/help_titles.png" />
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4 id="h4-cust-create">Create Charts</h4>
-                            <p>
-                                After selecting a
-                                <strong>Chart Type</strong>,
-                                <strong>Hospital ID</strong>,
-                                <strong>Y Axis Variable</strong>,
-                                <strong>X Axis Variable</strong>, and
-                                <strong>Date Range</strong>,
-                                click 'Submit' to create the chart.
-                            </p>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="./img/help_cust_create.png" />
-                        </div>
-                    </div>
-                </div>
-                <div id="help-faq-tab">
-                    <div class="row">
-                        <br />
-                        <div class="col-md-12">
-                            <div class="well well-sm">
-                                <a onclick="$(document).scrollTop($('#h4-export-csv').offset().top - 75); return false;" href="#">Where do I get a CSV File to upload to the dashboard?</a> <br />
-                                <a onclick="$(document).scrollTop($('#h4-csv-errors').offset().top - 75); return false;" href="#">What do the error messages mean that pop up when I upload my CSV file?</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-csv-sample').offset().top - 75); return false;" href="#">Is there a sample CSV file I can use?</a> <br />
                                 <a onclick="$(document).scrollTop($('#h4-print-pdf').offset().top - 75); return false;" href="#">How do I print a chart to a PDF?</a> <br />
-                                <a onclick="$(document).scrollTop($('#h4-complete-check').offset().top - 75); return false;" href="#">What does the 'Only Use Data Rows That Are Complete' checkbox do?</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-contact-us').offset().top - 75); return false;" href="#">Who can I contact if I have any questions?</a> <br />
                             </div>
                         </div>
                     </div>
                     <hr />
                     <div class="row">
-                        <div class="col-md-6">
-                            <h4 class="help-header" id="h4-export-csv">Where do I get a CSV File to upload to the dashboard?</h4>
-                            <p>To use the dashboard, you must download an exported CSV file from RedCAP.</p>
-                            <p>Log into RedCAP.</p>
-                            <p>Click '<strong>My Projects</strong>' from the top menu.</p>
-                            <p>Select the '<strong>Statewide Neonatal Abstinence Syndrome Improvement Project</strong>' project.'</p>
-                            <p>Click '<strong>Data Exports, Reports, and Stats</strong>' (listed under Applications) on the left menu.</p>
-                            <p>Click '<strong>Export Data</strong>' (next to the All Data report).</p>
-                            <p>Choose the '<strong>CSV / Microsoft Excel (labels)</strong>' Export Format.</p>
-                            <p>Click '<strong>Export Data</strong>' on the bottom right.</p>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="./img/help_export_csv.png" />
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4 class="help-header" id="h4-csv-errors">What do the error messages mean that pop up when I upload my CSV file?</h4>
-                            <p>These error messages occur when the application cannot find one or more columns of data in the CSV file to generate the reports.</p>
-                            <p>If the error box is red, this means you cannot generate any reports until this is resolved.</p>
-                            <p>If the error box is yellow, this means certain charts may not generate.</p>
+                        <div class="col-md-12">
+                            <h4 id="h4-csv-sample">Is there a sample CSV file I can use?</h4>
+                            <p>Yes!</p>
+                            <p>Right click on the link below and select 'Save As...' to download the sample data file</p>
                             <br />
-                            <p>You can resolve the issue by selecting the item(s) from the drop down menu that represents the missing data.</p>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="./img/help_csv_errors.png" />
+                            <a href="./data/VON_DATA.csv">Here is a link to a sample data file.</a>
                         </div>
                     </div>
                     <hr />
                     <div class="row">
                         <div class="col-md-6">
-                            <h4 class="help-header" id="h4-print-pdf">How do I print a chart to a PDF?</h4>
-                            <p>Click one of the print buttons on the top right.</p>
+                            <h4 id="h4-print-pdf">How do I print a chart to a PDF?</h4>
+                            <p>Click the print buttons on the top right.</p>
                             <p>In Google Chrome, change your Printer Destination to '<strong>Save as PDF</strong>'</p>
                             <p>In Mozilla FireFox, click the PDF drop down on the bottom left, and then select '<strong>Save as PDF...</strong>'</p>
                         </div>
@@ -403,1708 +295,131 @@
                     </div>
                     <hr />
                     <div class="row">
-                        <div class="col-md-6">
-                            <h4 class="help-header" id="h4-complete-check">What does the 'Only Use Data Rows That Are Complete' checkbox do?</h4>
-                            <p>These error messages occur when the application cannot find one or more columns of data in the CSV file to generate the reports.</p>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="./img/help_complete_check.png" />
-                        </div>
-                    </div>
-                    <hr />
-                    <!--
-                    <div class="row">
                         <div class="col-md-12">
-                            <h1>Under Construction</h1>
+                            <h4 id="h4-contact-us">Who can I contact if I have any questions?</h4>
                             <h3>E-mail <a href="mailto:ratra.j@husky.neu.edu">Ratra.J@husky.neu.edu</a> if you encounter any issues or have any questions</h3>
                         </div>
                     </div>
-                    -->
+                    <hr />
                 </div>
             </div>
-		</div>
-<!-- Help Tab End -->
+        </div>
+<!-- /Help Tab -->
 
-<!-- Home Tab Start -->
+<!-- Home Tab -->
         <div id="home-tab" class="print-container container tab">
 			<div class="row">
-			    <div class="col-md-12">
-                    <h3>Upload a CSV file to begin:</h3>
+                <div class="col-md-12">
+                    <img width="100%" src="./img/HSyE_icon_full.png" />
+                        <div>
+                            <h3 style="display: inline-block;">Upload a CSV file to begin:&emsp;&emsp;</h3>
+                            <input style="display: inline-block;" type="file" id="csvfile" />
+                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Chart Type:</h4>
+                        </div>
+                        <div class="panel-body">
+                            <select id="chart-type-select" class="form-control">
+                                <option value="0">Select One</option>
+                                <option value="control">Control Chart</option>
+                                <option value="funnel">Funnel Plot</option>
+                            </select>
+                            <br />
+                            <div id="control-chart-type-div" style="display: none;">
+                                <input id="x-chart-radio" name="control-type" value="x" type="radio" checked="checked" />&emsp;X-Bar Chart
+                                <br />
+                                <input id="p-chart-radio" name="control-type" value="p" type="radio" />&emsp;P Chart
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <input id="chart-title-text" placeholder="Chart Title" type="text" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+			    <div class="col-md-3">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">X-Axis Column:</h4>
+                        </div>
+                        <div class="panel-body">
+                            <select id="x-select" class="dataDrop form-control"></select>
+                            <select id="x-labels-select" class="form-control" multiple> </select>
+                        </div>
+                        <div class="panel-footer">
+                            <input id="xaxis-title-text" placeholder="X-Axis Label" type="text" class="form-control" />
+                        </div>
+                    </div>
+			    </div>
+			    <div class="col-md-3">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Y-Axis Column:</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div id="y-select-div">
+                                <select id="y-select" class="dataDrop form-control"></select>
+                            </div>
+                            <div id="incidences-select-div">
+                                <h4>Incidences:</h4>
+                                <select id="incidences-select" class="dataDrop form-control"> </select>
+                            </div>
+                            <div id="population-select-div">
+                                <h4>Population:</h4>
+                                <select id="population-select" class="dataDrop form-control"> </select>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <input id="yaxis-title-text" placeholder="Y-Axis Label" type="text" class="form-control" />
+                        </div>
+                    </div>
+			    </div>
+			    <div class="col-md-3">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Group Data By:</h4>
+                        </div>
+                        <div class="panel-body">
+                            <select id="group-by-select" class="dataDrop form-control"></select>
+                            <select id="datasets-select" class="form-control" multiple> </select>
+                        </div>
+                    </div>
 			    </div>
             </div>
             <div class="row">
-			    <div class="col-md-4">
-                    &emsp; &emsp;
-                    <input type="file" id="csvfile" />
-                    <br />
-                    <br />
-                    <div id="complete-check-div">
-                        <input class="complete-check" type="checkbox" /> Only Use Data Rows That Are Complete
-                    </div>
-			    </div>
-			    <div class="col-md-6">
-                    <div id="csvfile-error" class="alert alert-danger">
-                        <strong>Error reading CSV File!</strong>
-                         <br />Please Refresh the Page.
-                    </div>
-                    <div id="global-var-error-wrapper">
-                        <div id="global-single-var-error-template" class="alert alert-warning global-var-error">
-                            <input class="global-prop-hidden" type="hidden" />
-                            <input class="global-col-hidden" type="hidden" />
-                            <strong>Error finding '<span class="colName"></span>' column</strong>
-                            <br />Please select the correct column from the drop-down menu:
-                            <select class="dataDrop csvfile-error-select form-control"></select>
-                            <br />
-                            <input class="csvfile-single-error-btn btn btn-default" type="submit" value="Update" />
-                        </div>
-                        <div id="global-mult-var-error-template" class="alert alert-warning global-var-error">
-                            <input class="global-prop-hidden" type="hidden" />
-                            <input class="global-col-hidden" type="hidden" />
-                            <strong>Error finding '<span class="colName"></span>' columns</strong>
-                            <br />Please select the correct columns from the following menu:
-                            <select class="dataDrop csvfile-mult-error-select form-control" multiple></select>
-                            <input class="csvfile-mult-error-btn btn btn-default" type="submit" value="Update" />
-                        </div>
-                    </div>
-			    </div>
-			</div>
-			<div class="row">
-                <br />
-                <br /><br />
-			</div>
-			<div id="select-hid-row" class="row" style="display:none;">
                 <div class="col-md-3">
-                    <h4>Select Your Hospital ID:</h4>
-                    <br /> <br />
-                    <select id="hidSelect" class="hid-select"></select>
-			    </div>
-                <div class="col-md-4">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h4>Select A Date Range:</h4>
-                        </div>
-                    </div>
-                    <div class="row date-toggle">
-                        <div class="col-md-6">
-                            <br />
-                            Start:&emsp;<input class="date-toggle-start" type="text" />
-                            <br /><br />
-                            End: &emsp;<input class="date-toggle-end" type="text" />
-                        </div>
-                        <div class="col-md-6">
-                            <br><input class="interval-radio" id="month-toggle" type="radio" value="month" name="interval" checked="checked"> Monthly
-                            <br><input class="interval-radio" id="quarter-toggle" type="radio" value="quarter" name="interval"> Quarterly
-                        </div>
-                    </div>
                 </div>
                 <div class="col-md-3">
-                    <h4>Create Reports:</h4>
-                    <br /> <br />
-                    <input id="create-submit" class="btn btn-default" type="submit" value="Submit" />
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                 </div>
-			</div>
-    	        <!--
-
-    	    After uploading a file, 
-            if creating Local and Regional Dashboards fails (check if values are of right type)
-    	    ask the user to clarify certain columns.
-
-    	        -->
-            <div class="bottom-div"></div>
-    	</div>
-<!-- Home Tab End -->
-
-<!-- Local Tab Start -->
-        <div id="local-tab" class="container print-container tab print-report">
-            <div class="only-print">
-                <h5 style="text-align: center">My Hospital Report</h5>
+                <div class="col-md-3">
+                </div>
             </div>
-            <table class="print-area">
-                <tr>
-                    <td>
-                        <div class="chart-container">
-                            <input class="chart-options-index" type="hidden" value="0" />
-    					    <div id="localChartDiv1" class="chartDiv"></div>
-                            <br /><br />
-                            <div class="date-toggle no-print">
-                                <div class="date-toggle-range">
-                                    Start: <input class="date-toggle-start" type="text" />
-                                    &emsp;
-                                    End: <input class="date-toggle-end" type="text" />
-                                    &emsp;
-                                </div>
-                                <div class="date-toggle-interval">
-                                    <input value="month" class="interval-radio" name="refresh-interval-1" type="radio" /> Monthly
-                                    <br />
-                                    <input value="quarter" class="interval-radio"  name="refresh-interval-1" type="radio" /> Quarterly
-                                </div>
-                                <input value="Refresh" class="refresh-data-btn btn btn-default" type="submit" />
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="chart-container">
-                            <input class="chart-options-index" type="hidden" value="1" />
-    					    <div id="localChartDiv2" class="chartDiv"></div>
-                            <br /><br />
-                            <div class="date-toggle no-print">
-                                <div class="date-toggle-range">
-                                    Start: <input class="date-toggle-start" type="text" />
-                                    &emsp;
-                                    End: <input class="date-toggle-end" type="text" />
-                                    &emsp;
-                                </div>
-                                <div class="date-toggle-interval">
-                                    <input value="month" class="interval-radio" name="refresh-interval-2" type="radio" /> Monthly
-                                    <br />
-                                    <input value="quarter" class="interval-radio"  name="refresh-interval-2" type="radio" /> Quarterly
-                                </div>
-                                <input value="Refresh" class="refresh-data-btn btn btn-default" type="submit" />
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="chart-container">
-                            <input class="chart-options-index" type="hidden" value="2" />
-    					    <div id="localChartDiv3" class="chartDiv"></div>
-                            <br /><br />
-                            <div class="date-toggle no-print">
-                                <div class="date-toggle-range">
-                                    Start: <input class="date-toggle-start" type="text" />
-                                    &emsp;
-                                    End: <input class="date-toggle-end" type="text" />
-                                    &emsp;
-                                </div>
-                                <div class="date-toggle-interval">
-                                    <input value="month" class="interval-radio" name="refresh-interval-3" type="radio" /> Monthly
-                                    <br />
-                                    <input value="quarter" class="interval-radio"  name="refresh-interval-3" type="radio" /> Quarterly
-                                </div>
-                                <input value="Refresh" class="refresh-data-btn btn btn-default" type="submit" />
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="chart-container">
-                            <input class="chart-options-index" type="hidden" value="3" />
-    					    <div id="localChartDiv4" class="chartDiv"></div>
-                            <br /><br />
-                            <div class="date-toggle no-print">
-                                <div class="date-toggle-range">
-                                    Start: <input class="date-toggle-start" type="text" />
-                                    &emsp;
-                                    End: <input class="date-toggle-end" type="text" />
-                                    &emsp;
-                                </div>
-                                <div class="date-toggle-interval">
-                                    <input value="month" class="interval-radio" name="refresh-interval-4" type="radio" /> Monthly
-                                    <br />
-                                    <input value="quarter" class="interval-radio"  name="refresh-interval-4" type="radio" /> Quarterly
-                                </div>
-                                <input value="Refresh" class="refresh-data-btn btn btn-default" type="submit" />
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-            <div class="bottom-div"></div>
-    	</div>
-<!-- Local Tab End -->
-
-<!-- Regional Tab Start -->
-        <div id="regional-tab" class="container print-container tab print-report">
-            <div class="only-print">
-                <h5 style="text-align: center">State Report</h5>
+            <div class="row">
+                <div class="col-md-12">
+                    <br />
+                    <button id="create-chart-btn" class="form-control btn btn-primary">Create Chart</button>
+                </div>
             </div>
-            <table class="print-area">
-                <tr>
-                    <td>
-                        <div class="chart-container" style="margin-left: 20px;">
-                            <input class="chart-options-index" type="hidden" value="4" />
-    		               	<div id="regionChartDiv1" class="chartDiv"></div>
-                            <br /><br />
-                            <div class="date-toggle no-print" style="margin-left: -30px;">
-                                <div class="date-toggle-range">
-                                    Start: <input class="date-toggle-start" type="text" />
-                                    &emsp;
-                                    End: <input class="date-toggle-end" type="text" />
-                                    &emsp;
-                                </div>
-                                <div class="date-toggle-interval">
-                                    <input value="month" class="interval-radio" name="refresh-interval-5" type="radio" /> Monthly
-                                    <br />
-                                    <input value="quarter" class="interval-radio"  name="refresh-interval-5" type="radio" /> Quarterly
-                                </div>
-                                <input value="Refresh" class="refresh-data-btn btn btn-default" type="submit" />
-                            </div>
-                            <!--
-                            <div class="date-toggle no-print" style="margin-left: -24px">
-                                  Start: <input class="date-toggle-start" type="text" />
-                                  &emsp;
-                                  End: <input class="date-toggle-end" type="text" />
-                                  &emsp;
-                                  <input value="Refresh" class="refresh-data-btn btn btn-default" type="submit" />
-                            </div>
-                            -->
-                        </div>
-                    </td>
-                    <td>
-                        <div class="chart-container">
-                            <input class="chart-options-index" type="hidden" value="5" />
-    		               	<div id="regionChartDiv2" class="chartDiv"></div>
-                            <br /><br />
-                            <div class="date-toggle no-print">
-                                  Start: <input class="date-toggle-start" type="text" />
-                                  &emsp;
-                                  End: <input class="date-toggle-end" type="text" />
-                                  &emsp;
-                                  <input value="Refresh" class="refresh-data-btn btn btn-default" type="submit" />
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="chart-container">
-                            <input class="chart-options-index" type="hidden" value="6" />
-    		                <div id="regionChartDiv3" class="chartDiv"></div>
-                            <br /><br />
-                            <div class="date-toggle no-print">
-                                  Start: <input class="date-toggle-start" type="text" />
-                                  &emsp;
-                                  End: <input class="date-toggle-end" type="text" />
-                                  &emsp;
-                                  <input value="Refresh" class="refresh-data-btn btn btn-default" type="submit" />
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="chart-container">
-                            <input class="chart-options-index" type="hidden" value="7" />
-    		                <div id="regionChartDiv4" class="chartDiv"></div>
-                            <br /><br />
-                            <div class="date-toggle no-print">
-                                Start: <input class="date-toggle-start" type="text" />
-                                &emsp;
-                                End: <input class="date-toggle-end" type="text" />
-                                &emsp;
-                                <input value="Refresh" class="refresh-data-btn btn btn-default" type="submit" />
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-            <div class="bottom-div"></div>
-    	</div>
-<!-- Regional Tab End -->
-
-<!-- Customize Tab Start -->
-        <div id="customize-tab" class="container tab" style="margin-bottom: 10px;">
-		    <div class="row">
-		        <div class="col-md-12">
-		            <br />
-		            <input id="simpleRadio" type="radio" name="menu-radio" value="simple" checked="checked" /> Simple
-		            <input id="advancedRadio" type="radio" name="menu-radio" value="advanced" /> Advanced
-		            <br />
-		            <br />
-		        </div>
-		    </div>
-		    <div class="row">
-		        <div class="col-md-3">
-		            Select Chart Type:
-		        </div>
-		        <div class="col-md-3">
-		            Select Variable 1 (Y-Axis)
-		        </div>
-		        <div class="col-md-3">
-		            Select Variable 2 (X-Axis)
-		        </div>
-		        <div class="col-md-3">
-		        </div>
-		    </div>
-            <!-- Simple Menu -->
-            <div id="simpleRow">
-		         <div class="row">
-		             <div class="col-md-3">
-		                 <select id="simpleChartTypeDrop" class="form-control">
-		                     <option value="0">Select One</option>
-		                     <option value="1">Control Chart</option>
-		                     <option value="2">Box and Whisker Plot</option>
-		                     <option value="3">Funnel Plot</option>
-		                     <!-- <option value="4">Bar Chart</option> -->
-		                 </select>
-                         <br />
-                         <br />
-                         <div id="simpleHidSelect">
-                             <h4>Select a Hospital ID:</h4>
-                             <select class="hid-select form-control">
-                             </select>
-                         </div>
-		             </div>
-		             <div class="col-md-3">
-		                 <select id="simpleYDataDrop" class="form-control">
-		                     <option value="0">Select One</option>
-		                 </select>
-		             </div>
-		             <div class="col-md-3">
-		                 <select id="simpleXDataDrop" class="form-control">
-		                     <option value="0">Select One</option>
-		                 </select>
-		                 <div id="simpleDateXData">
-                             <br />
-                             <div class="date-toggle">
-                                 <div style="display: inline-block;">
-                                     Start:&emsp;<input id="simpleStartDateText"   class="date-toggle-start" type="text" /><br />
-		                             End:&emsp;&nbsp;&nbsp;<input id="simpleEndDateText" class="date-toggle-end" type="text" /><br />
-                                 </div>
-                                 <div style="display: inline-block; float: right;">
-                                    <input value="month" class="interval-radio" name="refresh-interval-cust" type="radio" checked="checked" /> Monthly
-                                    <br />
-                                    <input value="quarter" class="interval-radio"  name="refresh-interval-cust" type="radio" /> Quarterly
-                                 </div>
-                             </div>
-		                 </div>
-		             </div>
-		             <div class="col-md-3">
-		                 <input type="submit" id="simpleSubmitBtn" />
-		             </div>
-		         </div>
-		    </div>
-            <!-- Advanced Menu -->
-            <div id="advancedRow">
-                <!-- Select Chart Attributes Row -->
-		              <div class="row">
-		                  <div class="col-md-3">
-		                      <select id="chartTypeDrop" class="form-control">
-		                          <option value="0">Select One</option>
-		                          <option value="1">Control Chart</option>
-		                          <option value="2">Box and Whisker Plot</option>
-		                          <option value="3">Funnel Plot</option>
-		                          <!-- <option value="4">Bar Chart</option> -->
-		                      </select>
-                              <div id="hidChecks">
-                              </div>
-                              <br />
-                              <div id="advHidSelect">
-                                  <h4>Select a Hospital ID:</h4>
-                                  <select class="hid-select form-control">
-                                  </select>
-                              </div>
-		                  </div>
-		                  <div class="col-md-3">
-		                      <select id="yDataDrop" class="form-control dataDrop">
-		                          <option value="0">Select One</option>
-		                      </select>
-                              <div id="indicatorDiv">
-                                  <br />
-                                  <h5>Indicator Value:</h5>
-                                  <input id="indicatorText" class="form-control" type="text" />
-                              </div>
-		                  </div>
-		                  <div class="col-md-3">
-		                      <select id="xDataDrop" class="form-control dataDrop">
-		                          <option value="0">Select One</option>
-		                      </select>
-		                      <div id="multipleXData">
-		                          <select id="xDataDrop2" class="form-control dataDrop" multiple>
-		                      	</select>
-		                      </div>
-		                      <div id="dateXData">
-                                  <br />
-                                  <div class="date-toggle">
-                                      <div style="display: inline-block;">
-                                          Start:&emsp;<input id="startDateText" class="date-toggle-start" type="text" /><br />
-		                                  End:&emsp;&nbsp;&nbsp;<input id="endDateText" class="date-toggle-end" type="text" /><br />
-                                      </div>
-                                      <div style="display: inline-block; float: right;">
-                                         <input value="month" class="interval-radio" name="refresh-interval-cust-adv" type="radio" checked="checked" /> Monthly
-                                         <br />
-                                         <input value="quarter" class="interval-radio"  name="refresh-interval-cust-adv" type="radio" /> Quarterly
-                                      </div>
-                                  </div>
-                                  <!--
-		                          Start:&emsp;<input id="startDateText" type="text" class="date-text" /><br />
-		                          End:&emsp;&nbsp;<input id="endDateText" type="text" class="date-text" /><br />
-		                          &emsp;&emsp;&emsp;
-		                          <input id="monthRadio" type="radio" name="date-radio" value="month" /> Month 
-		                          &emsp;
-		                          <input id="yearRadio" type="radio" name="date-radio" value="year" /> Year
-                                  -->
-		                      </div>
-		                  </div>
-		                  <div class="col-md-3">
-		                      <input type="submit" id="advSubmitBtn" />
-		                  </div>
-		              </div>
-		    </div>
-    		<div class="row">
-    		    <br /><br />
-    		    <br /><br />
-    		</div>
-		    <!-- Enter Chart Labels Row -->
-		    <div class="row">
-		        <div class="col-md-3">
-		            <input id="chartTitleText" placeholder="Chart Title" class="form-control" />
-		        </div>
-		        <div class="col-md-3">
-		            <input id="yAxisTitleText" placeholder="Y-Axis Title" class="form-control" />
-		        </div>
-		        <div class="col-md-3">
-		            <input id="xAxisTitleText" placeholder="X-Axis Title" class="form-control" />
-		        </div>
-		        <div class="col-md-3">
-                    <div id="box-label-div" style="display: none;">
-                        <input id="box-labels-check"  type="checkbox" /> Show Box and Whisker Labels
-                    </div>
-		        </div>
-		    </div>
-    		<div class="row">
-    		    <br /><br />
-    		    <br /><br />
-    		</div>
-		    <!-- Chart Row -->
-		    <div class="row print-container">
-		        <div class="col-md-12">
-		            <div id="custChartDiv"></div>
-		        </div>
-		    </div>
-    		<div class="row">
-    		    <br /><br />
-    		    <br /><br />
-    		</div>
-            <div class="bottom-div"></div>
-		</div>
-<!-- Customize Tab End -->
-
-<!-- Footer Start -->
-        <footer class="footer">
-            <div class="footer-container container">
-                <a href="#">
-                    <img id="footer-brand-image" src="./img/HSyE_icon_full.png" height="60" width="417" />
-                </a>
-                <h5 id="footer-brand-text">in partnership with</h5>
-                <a href="#">
-                    <img id="footer-sponsor-image" src="./img/NeoQIC_icon_126_59.gif" height="59" width="126" />
-                </a>
+            <div class="row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10">
+                    <br />
+                    <div class="print-area" id="chartDiv"></div>
+                </div>
+                <div class="col-md-1">
+                </div>
             </div>
-        </footer>
-<!-- Footer End -->
+        </div>
+      </div>
+<!-- /Home Tab -->
 
-  </div>
-	<script type="text/javascript">
-	    $(document).ready(function () {
-	        var $homeTab = $("#home-tab");
-	        var $localTab = $("#local-tab");
-	        var $regionalTab = $("#regional-tab");
-	        var $customizeTab = $("#customize-tab");
-	        var $helpTab = $("#help-tab");
-
-	        var $tabs = [$homeTab, $localTab, $regionalTab, $customizeTab, $helpTab];
-
-            $homeTab.hide();
-	        $localTab.hide();
-	        $regionalTab.hide();
-	        $customizeTab.hide();
-	        $helpTab.show();
-            $(".global-var-error").hide();
-
-	        //$("#select-hid-row").hide();
-
-            //var docHeight = $tabs[0].find(".bottom-div").position().top;
-            //$('footer').css('top', 10+docHeight + 'px');
-            
-	        // Handle Switching Tabs
-	        function switchTab(i) {
-	            for (var j = 0; j < 5; j++) {
-	                if (j == i) {
-	                    $("nav ul.nav > li:nth-child(" + (j + 1) + ")").addClass("selected");
-	                    $tabs[j].show();
-	                }
-	                else {
-	                    $("nav ul.nav > li:nth-child(" + (j + 1) + ")").removeClass("selected");
-	                    $tabs[j].hide();
-	                }
-	            }
-                
-                //docHeight = $tabs[i].find(".bottom-div").position().top;
-                //$('footer').css('top', 10+docHeight + 'px');
-                //console.log("docHeight = ", docHeight);
-	        }
-
-	        // Handle Switching Tabs
-	        $("nav ul.nav > li:not(#printBtn)").click(function (e) {
-	            e.preventDefault();
-
-	            switchTab($(this).index());
-	        });
-            
-            // Help Tab Navigation
-            $("#help-charts-tab").hide();
-            $("#help-customize-tab").hide();
-            $("#help-faq-tab").hide();
-            $("#help-tab li").click(function() {
-                $(this).addClass('active').siblings().removeClass('active');
-                var i = $(this).index();
-                if (i == 0) {
-                    $("#help-gstart-tab").show().siblings().hide();
-                } else if (i == 1) {
-                    $("#help-charts-tab").show().siblings().hide();
-                } else if (i == 2) {
-                    $("#help-customize-tab").show().siblings().hide();
-                } else if (i == 3) {
-                    $("#help-faq-tab").show().siblings().hide();
-                }
-            });
-
-	        var $chartTypeDrop = $("#chartTypeDrop");
-	        var $yDataDrop = $("#yDataDrop");
-	        var $xDataDrop = $("#xDataDrop");
-	        var $xDataDrop2 = $("#xDataDrop2");
-	        var $chartTitleText = $("#chartTitleText");
-	        var $xAxisTitleText = $("#xAxisTitleText");
-	        var $yAxisTitleText = $("#yAxisTitleText");
-
-	        function setHospitalId() {
-	            //var hid_col = 105;               // Validate and/or have Users validate this number
-	            //var hid_col = global_hid_col;
-	            var hid_col = global_cols["global_hid_col"].val;
-
-                var hid_arr = [];
-                
-	            var title_html = '';
-	            var hid_check_html = '';
-
-	            _.each(csvArray, function (item) {
-                // num = hospital_id = hid
-	                var hid = item[hid_col];
-                    if (typeof hid === "undefined") {
-                    } else {
-                       var inList = $.inArray(hid, allHids);
-	                      if (inList == -1) {
-	                          allHids.push(hid);
-
-                             //var hids = $("#hidChecks input:checked");
-                             if (hid) {
-                                hid_arr.push(hid);
-	                            //title_html += '<option value="' + hid + '">' + hid + '</option>';
-                                //hid_check_html += '<input type="checkbox" value="' + hid + '"/>' + hid + '&emsp;';
-                             } else {
-	                              console.log("ERROR! Data Missing Hospital ID");
-                             }
-	                      }
-                    }
-	            });
-                
-                hid_arr.sort();
-                for (var i = 0; i < hid_arr.length; i++) {
-                    title_html += '<option value="' + hid_arr[i] + '">' + hid_arr[i] + '</option>';
-                    hid_check_html += '<input type="checkbox" value="' + hid_arr[i] + '"/>' + hid_arr[i] + '&emsp;';
-                }
-                
-	            //title_html = '<option value="0">I Do Not Know</option>' + title_html;
-	            title_html += '<option value="0">I Do Not Know</option>';
-                //hid_check_html += '<input type="checkbox" value="0"/> AVG &emsp;';
-                hid_check_html += '<input type="checkbox" value="AVG"/> AVG &emsp;';
-                hid_check_html = '<br /><h5>Hospital IDs:</h5>' + hid_check_html;
-
-	            $(".hid-select").html(title_html);
-	            $("#hidChecks").html(hid_check_html);
-
-	            $("#select-hid-row").show();
-	        }
-            
-            $("#csvfile-error").hide();
-            var errorCount = 0;
-            
-	        // Convert CSV data from fileupload to javascript object array
-	        $("#csvfile").change(function (e) {
-                errorCount++;
-                
-                var fileExt = e.target.files[0].name.split('.');
-                fileExt = fileExt[fileExt.length-1];
-                
-                if (errorCount > 1 || fileExt !== "csv") {
-                    //console.log("File Upload Error! Please refresh the page.");
-                    $("#csvfile-error").show();
-                    
-                    // Possibly Clear Charts
-                    // , hide hidSelect
-                    // , return
-                }
-                
-	            if (e.target.files[0] != undefined) {
-	                var reader = new FileReader();
-                    
-	                reader.onload = function (e) {
-	                    var str = e.target.result;
-	                    csvArray = [];
-	                    csvArray = d3.csv.parseRows(str);
-
-	                    titles = csvArray[0];
-	                    csvArray.splice(0, 1);      // Remove labels from csv data set
-                        
-	                    // Add all CSV Column Names to DropDown menus
-	                    var title_html = '<option value="">Select One</option>';
-                        for (var i = 0; i < titles.length; i++) {
-	                        title_html += '<option value="' + i + '">' + titles[i] + '</option>';
-                        }
-	                    $(".dataDrop").html(title_html);
-                        
-                        //promptUserForColumns();
-                        
-                        //validateCSVFile();
-	                    //setHospitalId();
-                        //validateComplete();
-	                };
-
-	                //reader.readAsText(e.target.files.item(0));
-	                reader.readAsText(e.target.files.item(0));
-	            }
-	        });
-            
-            $("body").on("click", ".csvfile-single-error-btn", function (e) {
-                e.preventDefault();
-                
-                var $errorDiv = $(this).closest(".global-var-error");
-                
-                var property = $errorDiv.find(".global-prop-hidden").val();
-                
-                var col = parseInt($errorDiv.find(".csvfile-error-select").val());
-                var header = $errorDiv.find(".csvfile-error-select option:selected").text();
-                
-                //console.log("col = ", col);
-                //console.log("header = ", header);
-                //console.log("property = ", property);
-                global_cols[property].val = col;
-                global_cols[property].name = header;
-                //setCookie(property, col, 365);
-                //setCookie(property + "_text", header, 365);
-                
-                if (property == "global_hid_col") {
-                    setHospitalId();
-                }
-                if (property == "global_complete_col") {
-                    validateComplete();
-                }
-                
-                $errorDiv.hide();
-                
-                console.log("global_cols = ", global_cols);
-                
-                return false;
-            });
-            
-            $("body").on("click", ".csvfile-mult-error-btn", function (e) {
-                e.preventDefault();
-                
-                var $errorDiv = $(this).closest(".global-var-error");
-                
-                var property = $errorDiv.find(".global-prop-hidden").val();
-                
-                var col = $errorDiv.find(".csvfile-mult-error-select").val();
-                var header = [];
-                $errorDiv.find(".csvfile-mult-error-select option:selected").each(function () {
-                    header.push($(this).text());
-                });
-                
-                global_cols[property].val = col;
-                global_cols[property].name = header;
-                //setCookie(property, col, 365);
-                //setCookie(property + "_text", header, 365);
-                
-                $errorDiv.hide();
-                
-                console.log("global_cols = ", global_cols);
-                
-                return false;
-            });
-            
-            $(".csvfile-error-btn").click(function (e) {
-                e.preventDefault();
-                
-                var $errorDiv = $(this).closest('.global-var-error');
-                var col = parseInt($errorDiv.find(".csvfile-error-select").val());
-                var id = $errorDiv.attr("id");
-                var idArr = id.split("-");
-                
-                global_cols["global_"+idArr[1]+"_col"].val = col;
-                global_cols["global_"+idArr[1]+"_col"].name = $errorDiv.find(".csvfile-error-select option:selected").text();
-                setCookie("global_"+idArr[1]+"_col", col, 365);
-                setCookie("global_"+idArr[1]+"_col_text", $errorDiv.find(".csvfile-error-select option:selected").text(), 365);
-                
-                if (id == "global-hid-error") {
-                    setHospitalId();
-                }
-                
-                /*
-                if (id == "global-date-error") {
-                    //global_date_col = col;
-                    global_date_col = col;
-                    setCookie("global_date_col", col, 365);
-                    setCookie("global_date_col_text", $errorDiv.find(".csvfile-error-select option:selected").text(), 365);
-                } else if (id == "global-los-start-error") {
-                    global_los_start_col = col;
-                    setCookie("global_losstart_col", col, 365);
-                    setCookie("global_losstart_col_text", $errorDiv.find(".csvfile-error-select option:selected").text(), 365);
-                } else if (id == "global-milk-error") {
-                    global_milk_col = col;
-                    setCookie("global_milk_col", col, 365);
-                    setCookie("global_milk_col_text", $errorDiv.find(".csvfile-error-select option:selected").text(), 365);
-                } else if (id == "global-pharm-error") {
-                    global_pharm_col = col;
-                    setCookie("global_pharm_col", col, 365);
-                    setCookie("global_pharm_col_text", $errorDiv.find(".csvfile-error-select option:selected").text(), 365);
-                } else if (id == "global-losend-error") {
-                    global_los_end_col = col;
-                    setCookie("global_losend_col", col, 365);
-                    setCookie("global_losend_col_text", $errorDiv.find(".csvfile-error-select option:selected").text(), 365);
-                } else if (id == "global-dischargemeds-error") {
-                    global_discharge_col = col;
-                    setCookie("global_dischargemeds_col", col, 365);
-                    setCookie("global_dischargemeds_col_text", $errorDiv.find(".csvfile-error-select option:selected").text(), 365);
-                } else if (id == "global-hid-error") {
-                    global_hid_col = col;
-                    setCookie("global_hid_col", col, 365);
-                    setCookie("global_hid_col_text", $errorDiv.find(".csvfile-error-select option:selected").text(), 365);
-                    setHospitalId();
-                }
-                */
-                
-                $errorDiv.hide();
-                
-                return false;
-            });
-
-	        var END_DATE = new Date();
-            END_DATE.setHours(23, 59, 59, 999);
-	        var START_DATE = new Date();
-	        //START_DATE.setMonth(START_DATE.getMonth() - 6);
-            START_DATE.setHours(0, 0, 0, 0);
-	        START_DATE.setMonth(START_DATE.getMonth() - 12);
-            
-            //$homeTab.find(".date-toggle-start").val(DateToString3(START_DATE));
-            //$homeTab.find(".date-toggle-end").val(DateToString3(END_DATE));
-            //$homeTab.find(".date-toggle-start").val(DateToString(START_DATE));
-            //$homeTab.find(".date-toggle-end").val(DateToString(END_DATE));
-            $(".date-toggle-start").val(DateToString(START_DATE));
-            $(".date-toggle-end").val(DateToString(END_DATE));
-
-            $(".chart-container .date-toggle").hide();
-
-	        $("#create-submit").click(function (e) {
-	            // -	Create Local and Regional Charts
-                e.preventDefault();
-                
-                validateComplete();
-                
-	            global_hid = $("#hidSelect").val();
-                $(".hid-select").val(global_hid);
-                
-                START_DATE = StringToDate($homeTab.find(".date-toggle-start").val());
-                START_DATE = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), 1);
-                START_DATE.setHours(0, 0, 0, 0);
-                END_DATE = StringToDate($homeTab.find(".date-toggle-end").val());
-                END_DATE.setHours(23, 59, 59, 999);
-                
-                //console.log("START_DATE = ", START_DATE);
-                //console.log("END_DATE = ", END_DATE);
-                
-                var interval = $homeTab.find("input[name=interval]:checked").val();
-                //console.log("interval = ", interval);
-                
-	            $(".chartDiv").empty();
-                $(".chart-container .date-toggle").show();
-                chartOptions.length = 0;
-
-	            var X_COL_MULT = [];
-	            //var X_COL = 1;      // Validate 1 = index of 'Date of Audit' column of CSV
-	            //var Y_COL = 77;     // Validate 77 = index of 'Length of Stay' column of CSV
-	            //var HID_COL = 105;      // Validate 105 = index of 'Hospital ID' column of CSV
-                //var HID_COL = global_hid_col;
-
-	            // After Confirming Hospital ID and Date Column
-	            // Sort CSV by Date and Hospital ID
-	            //csvArray.sort(dynamicSortMultiple([X_COL, HID_COL]));
-	            //csvArray.sort(dynamicSortMultiple([global_date_col, global_hid_col]));
-	            //csvArray.sort(dynamicSortMultiple([global_cols["global_date_col"].val, global_cols["global_hid_col"].val]));
-	            csvArray.sort(dynamicSortMultiple([global_cols["global_birthyear_col"].val, global_cols["global_birthmonth_col"].val, global_cols["global_hid_col"].val]));
-                //console.log("csvArray = ", csvArray);
-
-                // Store all data to redraw chart if date is changed.
-                chartOptions.push({
-                    options: { chartType: 1, byMonth: true, indicator: 0, hids: [global_hid], interval: interval },
-                    //Y_COL: 77,              // Validate 77 = index of 'Length of Stay' column of CSV
-                    //X_COL: 1,               // Validate 1 = index of 'Date of Audit' column of CSV
-                    //HID_COL: HID_COL,
-                    /*
-                    Y_COL: global_losend_col,
-                    X_COL: global_date_col,
-                    HID_COL: global_hid_col,
-                    */
-                    Y_COL: global_cols["global_losend_col"].val,
-                    //X_COL: global_cols["global_date_col"].val,
-                    HID_COL: global_cols["global_hid_col"].val,
-                    START_DATE: START_DATE,
-                    END_DATE: END_DATE,
-                    titles: { yAxis: "Length of Stay (# of days)", xAxis: "", chartTitle: "Length of Stay over Time" },
-                    width: width / 2 - margin.left - margin.right,
-                    height: height / 2 - margin.top - margin.bottom,
-                    selector: "div#localChartDiv1"
-                });
-                
-                
-	            // Draw Local Report - Avg Length of Stay vs Time - Run Control Chart
-                var opts = chartOptions[0];
-                drawChart(opts);
-                
-                // Store all data to redraw chart if date is changed.
-                chartOptions.push({
-                    options: { chartType: 1, byMonth: true, indicator: "Yes", hids: [global_hid], interval: interval },
-                    //Y_COL: 63,              // Validate 63 = index of 'Receiving Pharmacology Treatment' column of CSV
-                    //X_COL: 1,               // Validate 1 = index of 'Date of Audit' column of CSV
-                    //HID_COL: HID_COL,
-                    /*
-                    Y_COL: global_pharm_col,
-                    X_COL: global_date_col,
-                    HID_COL: global_hid_col,
-                    */
-                    Y_COL: global_cols["global_pharm_col"].val,
-                    //X_COL: global_cols["global_date_col"].val,
-                    HID_COL: global_cols["global_hid_col"].val,
-                    START_DATE: START_DATE,
-                    END_DATE: END_DATE,
-                    titles: { yAxis: "Receiving Pharm Treatment (%)", xAxis: "", chartTitle: "% Patients Receiving Pharmacology Treatment Over Time" },
-                    width: width / 2 - margin.left - margin.right,
-                    height: height / 2 - margin.top - margin.bottom,
-                    selector: "div#localChartDiv2"
-                });
-                
-                                   
-	            // Draw Local Report - % Receiving Pharm Treatment Over Time - Run Control Chart
-                opts = chartOptions[1];
-                drawChart(opts);
-                
-                // Store all data to redraw chart if date is changed.
-                chartOptions.push({
-                    options: { chartType: 1, byMonth: true, indicator: "Yes", hids: [global_hid], interval: interval },
-                    //Y_COL: 49,              // Validate 49 = index of 'Receive mothers own milk' column of CSV
-                    //X_COL: 1,               // Validate 1 = index of 'Date of Audit' column of CSV
-                    //HID_COL: HID_COL,
-                    /*
-                    Y_COL: global_milk_col,
-                    X_COL: global_date_col,
-                    HID_COL: global_hid_col,
-                    */
-                    Y_COL: global_cols["global_milk_col"].val,
-                    //X_COL: global_cols["global_date_col"].val,
-                    HID_COL: global_cols["global_hid_col"].val,
-                    START_DATE: START_DATE,
-                    END_DATE: END_DATE,
-                    titles: { yAxis: "Receiving Breast Milk (%)", xAxis: "", chartTitle: "% Patients Receiving Breast Milk Over Time" },
-                    width: width / 2 - margin.left - margin.right,
-                    height: height / 2 - margin.top - margin.bottom,
-                    selector: "div#localChartDiv3"
-                });
-                
-                
-	            // Draw Local Report - % Receiving Breast Milk vs Time - Run Control Chart
-                opts = chartOptions[2];
-                drawChart(opts);
-                
-                // Store all data to redraw chart if date is changed.
-                chartOptions.push({
-                    options: { chartType: 1, byMonth: true, indicator: "Yes", hids: [global_hid], interval: interval },
-                    //Y_COL: 78,              // Validate 78 = index of 'Patients discharged with meds' column of CSV
-                    //X_COL: 1,               // Validate 1 = index of 'Date of Audit' column of CSV
-                    //HID_COL: HID_COL,
-                    /*
-                    Y_COL: global_discharge_meds_col,
-                    X_COL: global_date_col,
-                    HID_COL: global_hid_col,
-                    */
-                    Y_COL: global_cols["global_dischargemeds_col"].val,
-                    //X_COL: global_cols["global_date_col"].val,
-                    HID_COL: global_cols["global_hid_col"].val,
-                    START_DATE: START_DATE,
-                    END_DATE: END_DATE,
-                    titles: { yAxis: "Discharged with Meds (%)", xAxis: "", chartTitle: "% Patients Discharged with Meds over Time" },
-                    width: width / 2 - margin.left - margin.right,
-                    height: height / 2 - margin.top - margin.bottom,
-                    selector: "div#localChartDiv4"
-                });
-                
-                
-	            // Draw Local Report - % of Patients Discharged with Meds vs Time - Run Control Chart
-                opts = chartOptions[3];
-                drawChart(opts);
-                
-                var hids = [global_hid, "AVG"];     // "AVG" = calculate total average
-                if (global_hid == "AVG") {
-                    hids = ["AVG"];
-                }
-                
-                // Store all data to redraw chart if date is changed.
-                chartOptions.push({
-                    options: { chartType: 1, byMonth: true, indicator: 0, hids: hids, interval: interval },
-                    //Y_COL: 77,              // Validate 77 = index of 'Length of Stay' column of CSV
-                    //X_COL: 1,               // Validate 1 = index of 'Date of Audit' column of CSV
-                    //HID_COL: [HID_COL],
-                    /*
-                    Y_COL: global_los_end_col,
-                    X_COL: global_date_col,
-                    HID_COL: [global_hid_col],
-                    */
-                    Y_COL: global_cols["global_losend_col"].val,
-                    //X_COL: global_cols["global_date_col"].val,
-                    HID_COL: [global_cols["global_hid_col"].val],
-                    START_DATE: START_DATE,
-                    END_DATE: END_DATE,
-                    titles: { yAxis: "Length of Stay (# of days)", xAxis: "", chartTitle: "Length of Stay over Time" },
-                    //width: width / 2,
-                    //height: (2 * height) / 3 - margin.top - margin.bottom,
-                    //width: 450 - margin.left,
-                    //height: 250 - margin.top - margin.bottom,
-                    width: width-510 - margin.left,
-                    height: height/2 - margin.top - margin.bottom,
-                    selector: "div#regionChartDiv1"
-                });
-                
-	            // Draw Regional Report - Avg Length of Stay vs Time - Run Control Chart
-                opts = chartOptions[4];
-                drawChart(opts);
-                
-                // Store all data to redraw chart if date is changed.
-                chartOptions.push({
-                    options: { chartType: 3, byMonth: true, indicator: "Yes" },
-                    //Y_COL: 63,              // Validate 63 = index of 'Receiving Pharmacology Treatment' column of CSV
-                    //X_COL: 1,               // Validate 1 = index of 'Date of Audit' column of CSV
-                    //HID_COL: HID_COL,
-                    /*
-                    Y_COL: global_pharm_col,
-                    X_COL: global_date_col,
-                    HID_COL: global_hid_col,
-                    */
-                    Y_COL: global_cols["global_pharm_col"].val,
-                    //X_COL: global_cols["global_date_col"].val,
-                    HID_COL: global_cols["global_hid_col"].val,
-                    START_DATE: START_DATE,
-                    END_DATE: END_DATE,
-                    titles: { yAxis: "Receiving Pharmacology Treatment (%)", xAxis: "Population", chartTitle: "% Patients That Receive Pharmacology Treatment" },
-                    //width: width / 2 + margin.left,
-                    //height: (3 * height) / 4 - margin.top - margin.bottom,
-                    //width: 450 + margin.left,
-                    //height: 250,
-                    width: width-510 + margin.left,
-                    height: height/2,
-                    selector: "div#regionChartDiv2"
-                });
-                
-	            // Draw Regional Report - % Patients Receiving Pharmacology Treatment - Funnel Plot
-                opts = chartOptions[5];
-                drawChart(opts);
-                
-                
-                // Store all data to redraw chart if date is changed.
-                chartOptions.push({
-                    options: { chartType: 3, byMonth: true, indicator: "Yes" },
-                    //Y_COL: 49,              // Validate 49 = index of 'Receive mothers own milk' column of CSV
-                    //X_COL: 1,               // Validate 1 = index of 'Date of Audit' column of CSV
-                    //HID_COL: HID_COL,
-                    /*
-                    Y_COL: global_milk_col,
-                    X_COL: global_date_col,
-                    HID_COL: global_hid_col,
-                    */
-                    Y_COL: global_cols["global_milk_col"].val,
-                    //X_COL: global_cols["global_date_col"].val,
-                    HID_COL: global_cols["global_hid_col"].val,
-                    START_DATE: START_DATE,
-                    END_DATE: END_DATE,
-                    titles: { yAxis: "Receiving Breast Milk (%)", xAxis: "Population", chartTitle: "% Patients That Receive Breast Milk" },
-                    //width: width / 2 + margin.left,
-                    //height: (3 * height) / 4 - margin.top - margin.bottom,
-                    //width: 450 + margin.left,
-                    //height: 250,
-                    width: width-510 + margin.left,
-                    height: height/2,
-                    selector: "div#regionChartDiv3"
-                });
-                
-	            // Draw Regional Report - % Patients Receiving Breast Milk - Funnel Plot
-                opts = chartOptions[6];
-                drawChart(opts);
-                
-                
-                // Store all data to redraw chart if date is changed.
-                chartOptions.push({
-                    options: { chartType: 3, byMonth: true, indicator: "Yes" },
-                    //Y_COL: 78,              // Validate 78 = index of 'Patients discharged with meds' column of CSV
-                    //X_COL: 1,               // Validate 1 = index of 'Date of Audit' column of CSV
-                    //HID_COL: HID_COL,
-                    /*
-                    Y_COL: global_discharge_meds_col,
-                    X_COL: global_date_col,
-                    HID_COL: global_hid_col,
-                    */
-                    Y_COL: global_cols["global_dischargemeds_col"].val,
-                    //X_COL: global_cols["global_date_col"].val,
-                    HID_COL: global_cols["global_hid_col"].val,
-                    START_DATE: START_DATE,
-                    END_DATE: END_DATE,
-                    titles: { yAxis: "Patients Discharged with Meds (%)", xAxis: "Population", chartTitle: "% Patients Discharged with Medication" },
-                    //width: width / 2 + margin.left,
-                    //height: (3 * height) / 4 - margin.top - margin.bottom,
-                    //width: 450 + margin.left,
-                    //height: 250,
-                    width: width-510 + margin.left,
-                    height: height/2,
-                    selector: "div#regionChartDiv4"
-                });
-                
-	            // Draw Regional Report - % Patients Discharged With Meds - Funnel Plot
-                opts = chartOptions[7];
-                drawChart(opts);
-                
-                
-                $(".chart-options-index").each(function () {
-                    var index = parseInt($(this).val());
-                    var $date = $(this).closest('.chart-container').find('.date-toggle');
-                    //console.log("START_DATE = ", START_DATE);
-                    //console.log("END_DATE = ", END_DATE);
-                    //console.log("string, START_DATE = ", DateToString3(START_DATE));
-                    //console.log("string, END_DATE = ",   DateToString3(END_DATE));
-                    //$date.find('.date-toggle-start').val(DateToString3(chartOptions[index].START_DATE));
-                    //$date.find('.date-toggle-end').val(DateToString3(chartOptions[index].END_DATE));
-                    $date.find('.date-toggle-start').val(DateToString(chartOptions[index].START_DATE));
-                    $date.find('.date-toggle-end').val(DateToString(chartOptions[index].END_DATE));
-                    $date.find('input.interval-radio[value=' + interval + ']').prop("checked", true);
-                });
-                
-
-                if (global_hid == 0) {
-                    $("nav ul.nav li:nth-child(3)").click();
-                } else {
-                    $("nav ul.nav li:nth-child(2)").click();
-                }
-	        });
-
-	        // Click Print Button to Print the Report
-            $("#print-page").click(function () {
-	            var index = $("nav ul.nav > li.selected").index();
-	            if (index == 1 || index == 2 || index == 0) {
-                    $tabs[index].printArea();
-                } else {
-	                $tabs[index].find(".print-container").printArea();
-                }
-            })
-            $("#print-report").click(function () {
-                $(".print-report").printArea();
-            });
-	        //$("#printBtn").click(function () {
-	        //    var index = $("nav ul.nav > li.selected").index();
-            //    
-            //    if (index == 0) {
-            //        $(".print-report").printArea();
-	        //    } else if (index == 1 || index == 2) {
-            //        $tabs[index].printArea();
-            //    } else {
-	        //        $tabs[index].find(".print-container").printArea();
-            //    }
-            //    /*
-	        //    if (index == 1 || index == 2) {
-            //        $tabs[index].printArea();
-            //    } else {
-	        //        $tabs[index].find(".print-container").printArea();
-            //    }
-            //    */
-
-	        //    //return false;
-	        //});
-
-            // Customize Tab - Chart Type Change event handler
-	        $chartTypeDrop.change(function () {
-	            // if selecting BoxPlot, show proper drop downs
-	            var val = parseInt($(this).val());
-
-	            if (val == 1) {                 // Run Chart
-	                $xDataDrop.show();
-	                $("#multipleXData").hide();
-	                $("#dateXData").show();
-                    $("#indicatorDiv").show();
-                    $("#hidChecks").show();
-                    $("#box-label-div").hide();
-	            } else if (val == 2) {          // Box and Whisker Plot
-	                $xDataDrop.hide();
-	                $("#multipleXData").show();
-	                $("#dateXData").show();
-                    $("#indicatorDiv").hide();
-                    $("#hidChecks").hide();
-                    $("#box-label-div").show();
-	            } else if (val == 3) {          // Funnel Plot
-	                $xDataDrop.show();
-	                $("#multipleXData").hide();
-	                $("#dateXData").show();
-                    $("#indicatorDiv").show();
-                    $("#hidChecks").hide();
-                    $("#box-label-div").hide();
-	            } else if (val == 4) {          // Bar Chart
-	                $xDataDrop.show();
-	                $("#multipleXData").hide();
-	                $("#dateXData").show();
-                    $("#indicatorDiv").hide();
-                    $("#hidChecks").hide();
-                    $("#box-label-div").hide();
-	            } else {
-	                $xDataDrop.show();
-	                $("#multipleXData").hide();
-	                $("#dateXData").hide();
-                    $("#indicatorDiv").hide();
-                    $("#hidChecks").hide();
-                    $("#box-label-div").hide();
-	            }
-	        });
-                          
-            $("input[name='menu-radio']").change(function () {
-                if ($("#advancedRadio").is(":checked")) {
-                    $("#advancedRow").show();
-                    $("#simpleRow").hide();
-                    $chartTypeDrop.trigger('change');
-                } else {
-                    $("#advancedRow").hide();
-                    $("#simpleRow").show();
-                }
-            });
-                          
-	        $("#simpleChartTypeDrop").change(function () {
-	            // show proper drop downs for simple customize menu
-	            var val = parseInt($(this).val());
-                
-                var los = global_cols["global_losend_col"].val >= 0 && global_cols["global_losstart_col"].val >= 0 ? true : false;
-                var pharm = global_cols["global_pharm_col"].val >= 0 ? true : false;
-                var milk = global_cols["global_milk_col"].val >= 0 ? true : false;
-                var dischargemeds = global_cols["global_dischargemeds_col"].val >= 0 ? true : false;
-                var weight = global_cols["global_weight_col"].val >= 0 ? true : false;
-                var maxcal = global_cols["global_maxcal_col"].val >= 0 ? true : false;
-                var locations = typeof global_cols["global_locations_cols"].val !== "number" && global_cols["global_locations_cols"].val.length > 0 ? true : false;
-                var mfdrugs = typeof global_cols["global_mfdrugs_cols"].val !== "number" && global_cols["global_mfdrugs_cols"].val.length > 0 ? true : false;
-                var formulas = typeof global_cols["global_formulas_cols"].val !== "number" && global_cols["global_formulas_cols"].val.length > 0 ? true : false;
-                var dismeds = typeof global_cols["global_dismeds_cols"].val !== "number" && global_cols["global_dismeds_cols"].val.length > 0 ? true : false;
-
-	            if (val == 1) {                 // Run Chart
-                    var html = '<option value="0">Select One</option>';
-                    if (los) html += '<option value="los">Length of Stay</option>';
-                    if (pharm) html += '<option value="pharm">Pharmacology Treatment</option>';
-                    if (milk) html += '<option value="bmilk">Infants Receiving Breast Milk</option>';
-                    if (dischargemeds) html += '<option value="dismeds">Discharged with Medication</option>';
-                    $("#simpleYDataDrop").html(html);
-	                $("#simpleDateXData").show();
-                    $("#simpleXDataDrop").html(
-                        '<option value="0">Select One</option>'
-                        + '<option value="time">Time</option>'
-                    );
-                    $("#simpleXDataDrop").hide();
-                    $("#box-label-div").hide();
-	            } else if (val == 2) {          // Box and Whisker Plot
-                    var html = '<option value="0">Select One</option>'
-                    if (los) html += '<option value="los">Length of Stay</option>';
-                    if (weight) html += '<option value="weight">Body Weight</option>';
-                    if (maxcal) html += '<option value="caloric">Maximum Caloric Density</option>';
-                    $("#simpleYDataDrop").html(html);
-	                $("#simpleDateXData").show();
-                    $("#simpleXDataDrop").show();
-                    html = '<option value="0">Select One</option>';
-                    if (locations) html += '<option value="locations">Hospital Care Locations</option>';
-                    if (mfdrugs) html += '<option value="mfdrugs">Maternal-Fetal Substance Exposures</option>';
-                    if (formulas) html += '<option value="formulas">Formulas</option>';
-                    if (dismeds) html += '<option value="dismeds">Infant Discharge Medications</option>';
-                    $("#simpleXDataDrop").html(html);
-                    $("#box-label-div").show();
-	            } else if (val == 3) {          // Funnel Plot
-                    var html = '<option value="0">Select One</option>';
-                    if (pharm) html += '<option value="pharm">Pharmacology Treatment</option>';
-                    if (milk) html += '<option value="bmilk">Infants Receiving Breast Milk</option>';
-                    if (dischargemeds) html += '<option value="dismeds">Discharged with Medication</option>';
-                    $("#simpleYDataDrop").html(html);
-	                $("#simpleDateXData").show();
-                    $("#simpleXDataDrop").show();
-                    $("#simpleXDataDrop").html('<option value="time">Population</option>');
-                    $("#box-label-div").hide();
-	            } else {
-                    $("#simpleYDataDrop").html('');
-                    $("#simpleXDataDrop").html('');
-	                $("#simpleDateXData").hide();
-                    $("#simpleXDataDrop").show();
-                    $("#box-label-div").hide();
-	            }
-	        });
-                          
-            $("#advancedRow").hide();
-            $("#simpleRow").show();
-            $("#simpleDateXData").hide();
-                          
-	        $("#multipleXData").hide();
-	        $("#dateXData").hide();
-            $("#indicatorDiv").hide();
-            $("#hidChecks").hide();
-            
-            $("body").on("click", "#hidChecks input", function () {
-                if ($("#hidChecks input:checked").length > 1) $("#hidChecks input[value='AVG']").prop("checked", true);
-            });
-
-	        //$("#startDateText, #endDateText").datepicker();
-	        //$("#simpleStartDateText, #simpleEndDateText").datepicker();
-            
-            $(".interval-radio").click(function() {
-                if ($(this).val() == "quarter") {
-                    $(this).closest(".date-toggle").find(".date-toggle-start, .date-toggle-end").addClass("only-year");
-                    //$(this).closest(".date-toggle").find(".date-toggle-start").addClass("only-year-start");
-                    //$(this).closest(".date-toggle").find(".date-toggle-end").addClass("only-year-end");
-                    //$(this).parent().parent().parent().find(".date-toggle-year").show();
-                    //$(this).parent().parent().parent().find(".date-toggle-month").hide();
-                } else {
-                    $(this).closest(".date-toggle").find(".date-toggle-start, .date-toggle-end").removeClass("only-year");
-                    //$(this).closest(".date-toggle").find(".date-toggle-start").removeClass("only-year-start");
-                    //$(this).closest(".date-toggle").find(".date-toggle-end").removeClass("only-year-end");
-                    //$(this).parent().parent().parent().find(".date-toggle-year").hide();
-                    //$(this).parent().parent().parent().find(".date-toggle-month").show();
-                }
-            });
-            
-	        $(".date-toggle-start, .date-toggle-end").datepicker({
-                                                         dateFormat: "mm/yy",
-                                                         changeMonth: true,
-                                                         changeYear: true,
-                                                         showButtonPanel: true,
-                                                         onClose: function(dateText, inst) {
-                                                         
-                                                                 function isDonePressed(){
-                                                                         return ($('#ui-datepicker-div').html().indexOf('ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all ui-state-hover') > -1);
-                                                                 }
-                                                         
-                                                                 if (isDonePressed()){
-                                                                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                                                                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                                                                    if (inst.dpDiv.hasClass('only_year_start')) {
-                                                                        month = 0;
-                                                                        $(this).datepicker('setDate', new Date(year, month, 1)).trigger('change');
-                                                                    } else if (inst.dpDiv.hasClass('only_year_end')) {
-                                                                        month = 11;
-                                                                        $(this).datepicker('setDate', new Date(year, month, 31)).trigger('change');
-                                                                    } else {
-                                                                        $(this).datepicker('setDate', new Date(year, month, 1)).trigger('change');
-                                                                    }
-                                                                    
-                                                                    $('.date-picker').focusout()//Added to remove focus from datepicker input box on selecting date
-                                                                 }
-                                                         },
-                                                         //onSelect: function (dateText, inst)
-                                                         onChangeMonthYear: function (year, month, inst) {
-                                                            if (inst.dpDiv.hasClass('only_year_start') || inst.dpDiv.hasClass('only_year_end')) {
-                                                                setTimeout(function() {
-                                                                    $("a.ui-datepicker-prev").addClass("hidden");
-                                                                    $("a.ui-datepicker-next").addClass("hidden");
-                                                                    $(".ui-datepicker-month").addClass("hidden");
-                                                                }, 1);
-                                                            } else {
-                                                                setTimeout(function() {
-                                                                    $("a.ui-datepicker-prev").removeClass("hidden");
-                                                                    $("a.ui-datepicker-next").removeClass("hidden");
-                                                                    $(".ui-datepicker-month").removeClass("hidden");
-                                                                }, 1);
-                                                            }
-                                                         },
-                                                         beforeShow : function(input, inst) {
-                                                         
-                                                                 inst.dpDiv.addClass('month_year_datepicker')
-                                                                 
-                                                                 if ((datestr = $(this).val()).length > 0) {
-                                                                    year = datestr.substring(datestr.length-4, datestr.length);
-                                                                    month = datestr.substring(0, 2);
-                                                                    $(this).datepicker('option', 'defaultDate', new Date(year, month-1, 1));
-                                                                    $(this).datepicker('setDate', new Date(year, month-1, 1));
-                                                                 }
-                                                                 
-                                                                 if ($(input).hasClass("only-year")) {
-                                                                    if ($(input).hasClass("date-toggle-start")) {
-                                                                        inst.dpDiv.addClass('only_year_start');
-                                                                        //inst.dpDiv.removeClass('only_year_end');
-                                                                    } else {
-                                                                        inst.dpDiv.removeClass('only_year_start');
-                                                                    }
-                                                                    if ($(input).hasClass("date-toggle-end")) {
-                                                                        inst.dpDiv.addClass('only_year_end');
-                                                                        //inst.dpDiv.removeClass('only_year_start');
-                                                                    } else {
-                                                                        inst.dpDiv.removeClass('only_year_end');
-                                                                    }
-                                                                    setTimeout(function () {
-                                                                        $(this).datepicker("option", { changeMonth: false });
-                                                                        $(input).datepicker("widget").find("a.ui-datepicker-prev").addClass("hidden");
-                                                                        $(input).datepicker("widget").find("a.ui-datepicker-next").addClass("hidden");
-                                                                        $(input).datepicker("widget").find(".ui-datepicker-month").addClass("hidden");
-                                                                    }, 1);
-                                                                 } else {
-                                                                    inst.dpDiv.removeClass('only_year_start');
-                                                                    inst.dpDiv.removeClass('only_year_end');
-                                                                    setTimeout(function () {
-                                                                        $(this).datepicker("option", { changeMonth: true });
-                                                                        $(this).datepicker("widget").find("a.ui-datepicker-prev").removeClass("hidden");
-                                                                        $(this).datepicker("widget").find("a.ui-datepicker-next").removeClass("hidden");
-                                                                        $(this).datepicker("widget").find(".ui-datepicker-month").removeClass("hidden");
-                                                                    }, 1);
-                                                                 }
-                                                         }
-                                                         });
-            
-            $(".refresh-data-btn").click(function (e) {
-                e.preventDefault();
-                
-                var $chartContainer = $(this).closest('.chart-container');
-                var chartIndex = $chartContainer.find('.chart-options-index').val();
-                //var START_DATE = new Date($chartContainer.find('.date-toggle-start').val());
-                var START_DATE = StringToDate($chartContainer.find('.date-toggle-start').val());
-                START_DATE = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), 1);
-                START_DATE.setHours(0, 0, 0, 0);
-                //var END_DATE = new Date($chartContainer.find('.date-toggle-end').val());
-                var END_DATE = StringToDate($chartContainer.find('.date-toggle-end').val());
-                END_DATE.setHours(23, 59, 59, 999);
-                
-                //console.log("START_DATE = ", START_DATE);
-                //console.log("END_DATE = ", END_DATE);
-                
-                chartOptions[chartIndex].START_DATE = START_DATE;
-                chartOptions[chartIndex].END_DATE = END_DATE;
-                
-                $chartContainer.find(".chartDiv").empty();
-                
-                var opts = chartOptions[chartIndex];
-                var chartType = chartOptions[chartIndex].options.chartType;
-                
-                if (chartType == 1) {           // Draw Run Chart
-                    var interval = $chartContainer.find("input.interval-radio:checked").val();
-                    opts.options["interval"] = interval;
-                    
-                    drawRunChart(customizeCSVData(opts.options, opts.Y_COL, opts.X_COL, opts.HID_COL, opts.START_DATE, opts.END_DATE, global_complete),
-                             opts.titles, opts.width, opts.height, opts.selector);
-                } else if (chartType == 2) {    // Draw Box Plot
-                } else if (chartType == 3) {    // Draw Funnel Plot
-                    drawFunnelPlot(customizeCSVData(opts.options, opts.Y_COL, opts.X_COL, opts.HID_COL, opts.START_DATE, opts.END_DATE, global_complete),
-                               opts.titles, opts.width, opts.height, opts.selector);
-                } else if (chartType == 4) {    // Draw Bar Chart
-                }
-                
-                return false;
-            });
-                          
-	        // Customize CSV Submit Button Handler
-	        $("#advSubmitBtn").click(function (e) {
-	            e.preventDefault();
-                
-                validateComplete();
-                                  
-                //var byMonth = true;
-                //if ($("#yearRadio:checked").length > 0) byMonth = false;
-                
-	            var START_DATE = StringToDate($("#startDateText").val());
-                START_DATE = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), 1);
-                START_DATE.setHours(0, 0, 0, 0);
-	            var END_DATE = StringToDate($("#endDateText").val());
-                END_DATE.setHours(23, 59, 59, 999);
-                
-                global_hid = $("#advHidSelect").find(".hid-select").val();
-
-	            var chartType = parseInt($chartTypeDrop.val());
-	            $("#custChartDiv").empty();
-
-	            if (chartType == 1) {           // Draw Run Chart
-	                var Y_COL = $yDataDrop.val();
-	                var X_COL = $xDataDrop.val();
-                                  
-	                //var HID_COL = global_hid_col;
-	                var HID_COL = global_cols["global_hid_col"].val;
-                                  
-	                //var START_DATE = new Date($("#startDateText").val());
-	                //var END_DATE = new Date($("#endDateText").val());
-                    
-	                //var START_DATE = StringToDate($("#startDateText").val());
-                    //START_DATE = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), 1);
-                    //START_DATE.setHours(0, 0, 0, 0);
-	                //var END_DATE = StringToDate($("#endDateText").val());
-                    //END_DATE.setHours(23, 59, 59, 999);
-                    
-                    var interval = $("#dateXData input.interval-radio:checked").val();
-                                  
-                    var hids = [];
-                    $("#hidChecks input:checked").each(function () {
-                         hids.push($(this).val());
-                    });
-                    if (hids.length > 1) HID_COL = [global_cols["global_hid_col"].val];
-                    //if (hids.length == 1) $("#advHidSelect .hid-select option[value="+hids[0]+"], #simpleHidSelect .hid-select option[value="+hids[0]+"]").prop("checked", true);
-                    if (hids.length == 1) $("#advHidSelect .hid-select, #simpleHidSelect .hid-select").val(hids[0]);
-                                  
-                    var indicatorVal = $("#indicatorText").val();
-                    if (isNumeric(indicatorVal)) indicatorVal = parseFloat(indicatorVal);
-                                  
-                    //console.log("hids = ", hids);
-                                  
-                                  /*
-                    // Local Report - Draw % Receiving Pharm Treatment Over Time - Run Chart
-                    drawRunChart(customizeCSVData({ chartType: chartType, byMonth: byMonth, indicator: indicatorVal, hids: hids }, Y_COL, X_COL, HID_COL, START_DATE, END_DATE),
-                                    { yAxis: $yAxisTitleText.val(), xAxis: $xAxisTitleText.val(), chartTitle: $chartTitleText.val() },
-                                    width - margin.left - margin.right,
-                                    height - margin.top - margin.bottom,
-                                    "div#custChartDiv");
-                                    */
-                    var runChartOptions = {
-                        options: { chartType: chartType, indicator: indicatorVal, hids: hids, interval: interval },
-                        Y_COL: Y_COL,
-                        //X_COL: X_COL,
-                        HID_COL: HID_COL,
-                        START_DATE: START_DATE,
-                        END_DATE: END_DATE,
-                        titles: { yAxis: $yAxisTitleText.val(), xAxis: $xAxisTitleText.val(), chartTitle: $chartTitleText.val() },
-                        width: width - margin.left - margin.right,
-                        height: height - margin.top - margin.bottom,
-                        selector: "div#custChartDiv"
-                                  };
-                    
-                    drawChart(runChartOptions);
-                    
-                    /*
-                // Store all data to redraw chart if date is changed.
-                chartOptions.push({
-                    options: { chartType: 1, byMonth: true, indicator: 0, hids: [global_hid] },
-                    //Y_COL: 77,              // Validate 77 = index of 'Length of Stay' column of CSV
-                    //X_COL: 1,               // Validate 1 = index of 'Date of Audit' column of CSV
-                    //HID_COL: HID_COL,
-                    Y_COL: global_los_end_col,
-                    X_COL: global_date_col,
-                    HID_COL: global_hid_col,
-                    START_DATE: START_DATE,
-                    END_DATE: END_DATE,
-                    titles: { yAxis: "Length of Stay (# of days)", xAxis: "", chartTitle: "Length of Stay over Time - (12 mo.)" },
-                    width: width / 2 - margin.left - margin.right,
-                    height: height / 2 - margin.top - margin.bottom,
-                    selector: "div#localChartDiv1"
-                });
-                
-                
-	            // Draw Local Report - Avg Length of Stay vs Time - Run Control Chart
-                var opts = chartOptions[0];
-                drawChart(opts);
-                    */
-                                  
-	            } else if (chartType == 2) {    // Draw Box Plot
-	                var Y_COL = $yDataDrop.val();
-	                var X_COL_MULT = $xDataDrop2.val();
-	                var HID_COL = global_cols["global_hid_col"].val;
-                    var labels = $("#box-labels-check:checked").length < 1 ? false : true;
-                    
-	                // Customize Report - Box and Whisker Plot
-                    //drawBoxPlot(customizeCSVData({ chartType: chartType, byMonth: true }, Y_COL, X_COL_MULT, HID_COL, START_DATE, END_DATE, true),
-                    //         { yAxis: $yAxisTitleText.val(), xAxis: $xAxisTitleText.val(), chartTitle: $chartTitleText.val() },
-                    //         width - margin.left - margin.right,
-                    //         height - margin.top - margin.bottom,
-                    //         "div#custChartDiv");
-                             
-                    var boxPlotOptions = {
-                        options: { chartType: chartType, byMonth: true },
-                        Y_COL: Y_COL,
-                        X_COL: X_COL_MULT,
-                        HID_COL: HID_COL,
-                        START_DATE: START_DATE,
-                        END_DATE: END_DATE,
-                        titles: { yAxis: $yAxisTitleText.val(), xAxis: $xAxisTitleText.val(), chartTitle: $chartTitleText.val() },
-                        width: width - margin.left - margin.right,
-                        height: height - margin.top - margin.bottom,
-                        selector: "div#custChartDiv",
-                        boxLabels: labels
-                    };
-                    
-                    drawChart(boxPlotOptions);
-                                  
-	            } else if (chartType == 3) {	// Draw Funnel Plot 
-	                var Y_COL = $yDataDrop.val();
-	                //var X_COL = $xDataDrop.val();
-	                //var HID_COL = global_hid_col;
-	                var HID_COL = global_cols["global_hid_col"].val;
-	                //var START_DATE = new Date($("#startDateText").val());
-	                //var END_DATE = new Date($("#endDateText").val());
-                    
-	                //var START_DATE = StringToDate($("#startDateText").val());
-                    //START_DATE = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), 1);
-                    //START_DATE.setHours(0, 0, 0, 0);
-	                //var END_DATE = StringToDate($("#endDateText").val());
-                    //END_DATE.setHours(23, 59, 59, 999);
-                    
-                    var indicatorVal = $("#indicatorText").val();
-                    if (isNumeric(indicatorVal)) indicatorVal = parseFloat(indicatorVal);
-                                  
-                    // Customize Report - Draw % Patients Receiving Pharmacology Treatment - Funnel Plot
-                    var funnelPlotOpts = {
-                        options: { chartType: 3, indicator: indicatorVal },
-                        Y_COL: Y_COL,
-                        //X_COL: X_COL,
-                        HID_COL: HID_COL,
-                        START_DATE: START_DATE,
-                        END_DATE: END_DATE,
-                        titles:{ yAxis: $yAxisTitleText.val(), xAxis: $xAxisTitleText.val(), chartTitle: $chartTitleText.val() },
-                        width: width,
-                        height: height - margin.top - margin.bottom,
-                        selector: "div#custChartDiv"
-                    }
-                    
-                    drawChart(funnelPlotOpts);
-                    /*
-                    drawFunnelPlot(customizeCSVData({ chartType: 3, byMonth: true, indicator: indicatorVal }, Y_COL, X_COL, HID_COL, START_DATE, END_DATE, true),
-                             { yAxis: $yAxisTitleText.val(), xAxis: $xAxisTitleText.val(), chartTitle: $chartTitleText.val() },
-                             width,
-                             height - margin.top - margin.bottom,
-                             "div#custChartDiv");
-                    */
-
-	            }
-                //else if (chartType == 4) {    // Draw Bar Chart
-	            //    var Y_COL = $yDataDrop.val();
-	            //    var X_COL = $xDataDrop.val();
-	            //    //var HID_COL = global_hid_col;
-	            //    var HID_COL = global_cols["global_hid_col"].val;
-	            //    var START_DATE = new Date($("#startDateText").val());
-	            //    var END_DATE = new Date($("#endDateText").val());
-
-                //    /*
-	            //    // Customize Report - Bar Chart 
-	            //    drawBarChart(customizeCSVData(chartType, Y_COL, X_COL, HID_COL, START_DATE, END_DATE, byMonth),
-                //	             { yAxis: $yAxisTitleText.val(), xAxis: $xAxisTitleText.val(), chartTitle: $chartTitleText.val() },
-                //	             width - margin.left - margin.right,
-                //	             height - margin.top - margin.bottom,
-                //	             "div#custChartDiv");
-                //    */
-	            //}
-	        });
-                          
-            $("#simpleSubmitBtn").click(function (e) {
-                e.preventDefault();
-                
-                var chartType = $("#simpleChartTypeDrop").val();
-                $("#startDateText").val($("#simpleStartDateText").val());
-                $("#endDateText").val($("#simpleEndDateText").val());
-                $("#dateXData").find("input.interval-radio[value=" + $("#simpleDateXData").find("input.interval-radio:checked").val() + "]").click();
-                //$("#dateXData").find("input.interval-radio[value=" + $("#simpleDateXData").find("input.interval-radio:checked").val() + "]").prop("checked", true);
-                //$("#monthRadio").click();
-                $("#advHidSelect").find(".hid-select").val($("#simpleHidSelect").find(".hid-select").val());
-                    
-                if (chartType == 0) {
-                
-                    // Display Error message to user
-                    console.log("error selecting chart type");
-                    
-                } else if (chartType == 1) {                // Draw Run Chart
-                    var y = $("#simpleYDataDrop").val();
-                    //$xDataDrop.val(1);
-                    
-                    $("#chartTypeDrop").val(chartType);
-                                        
-                    if ( y == "los") {
-                        //$yDataDrop.val("77");
-                        $yDataDrop.val(global_cols["global_losend_col"].val);
-                        $("#indicatorText").val(0);
-                    }
-                    else if ( y == "pharm") {
-                        //$yDataDrop.val("63");
-                        $yDataDrop.val(global_cols["global_pharm_col"].val);
-                        $("#indicatorText").val("Yes");
-                    }
-                    else if ( y == "bmilk") {
-                        //$yDataDrop.val("49");
-                        $yDataDrop.val(global_cols["global_milk_col"].val);
-                        $("#indicatorText").val("Yes");
-                    }
-                    else if ( y == "dismeds") {
-                        //$yDataDrop.val("78");
-                        $yDataDrop.val(global_cols["global_dischargemeds_col"].val);
-                        $("#indicatorText").val("Yes");
-                    }
-                    
-                    $('#hidChecks input[type="checkbox"]').prop('checked', false);
-                    //$('#hidChecks input[value=' + global_hid + ']').prop('checked', true);
-                    $("#hidChecks input[value=" + $("#simpleHidSelect .hid-select").val() + "]").prop("checked", true);
-                    //$('#hidChecks input[value="0"]').prop('checked', true);
-                                        
-                    $("#advSubmitBtn").click();
-                } else if (chartType == 2) {            // Draw Box Plot
-                    var y = $("#simpleYDataDrop").val();
-                    var x = $("#simpleXDataDrop").val();
-                                        
-                    $("#chartTypeDrop").val(chartType);
-                                        
-                    if (y == "los") {
-                        //$yDataDrop.val("77");
-                        $yDataDrop.val(global_cols["global_losend_col"].val);
-                    }
-                    else if (y == "weight") {
-                        //$yDataDrop.val("3");
-                        $yDataDrop.val(global_cols["global_weight_col"].val);
-                    }
-                    else if (y == "caloric") {
-                        //$yDataDrop.val("59");
-                        $yDataDrop.val(global_cols["global_maxcal_col"].val);
-                    }
-                                        
-                    //$xDataDrop.val(1);
-                    //$xDataDrop.val(global_cols["global_date_col"].val);
-                    if (x == "locations") {
-                        //$xDataDrop2.val([9, 10, 11, 12, 13]);
-                        $xDataDrop2.val(global_cols["global_locations_cols"].val);
-                    } else if (x == "mfdrugs") {
-                        //$xDataDrop2.val([17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]);
-                        $xDataDrop2.val(global_cols["global_mfdrugs_cols"].val);
-                    } else if (x == "formulas") {
-                        //$xDataDrop2.val([51, 52, 53, 54, 55, 56, 57]);
-                        $xDataDrop2.val(global_cols["global_formulas_cols"].val);
-                    } else if (x == "dismeds") {
-                        //$xDataDrop2.val([79, 80, 81, 82, 83]);
-                        $xDataDrop2.val(global_cols["global_dismeds_cols"].val);
-                    }
-                    
-                    $("#advSubmitBtn").click();
-                } else if (chartType == 3) {        // Draw Funnel Plot
-                    var y = $("#simpleYDataDrop").val();
-                                        
-                    $("#chartTypeDrop").val(chartType);
-                                        
-                    if ( y == "los") {
-                        //$yDataDrop.val("77");
-                        $yDataDrop.val(global_cols["global_losend_col"].val);
-                        $("#indicatorText").val(0);
-                    }
-                    else if ( y == "pharm") {
-                        //$yDataDrop.val("63");
-                        $yDataDrop.val(global_cols["global_pharm_col"].val);
-                        $("#indicatorText").val("Yes");
-                    }
-                    else if ( y == "bmilk") {
-                        //$yDataDrop.val("49");
-                        $yDataDrop.val(global_cols["global_milk_col"].val);
-                        $("#indicatorText").val("Yes");
-                    }
-                    else if ( y == "dismeds") {
-                        //$yDataDrop.val("78");
-                        $yDataDrop.val(global_cols["global_dischargemeds_col"].val);
-                        $("#indicatorText").val("Yes");
-                    }
-                    
-                    //$xDataDrop.val(1);
-                    //$xDataDrop.val(global_cols["global_date_col"].val);
-                    $("#advSubmitBtn").click();
-                }
-            });
-
-	    });
-	</script>
+      <script type="text/javascript" src="./js/csvtographs.js"> </script>
     </body>
 </html>
