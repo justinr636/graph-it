@@ -28,10 +28,17 @@ function ExtractFromCSV(index) {
     for (var i = 0; i < csvArray.length; i++) {
         var item = csvArray[i][index];
         
+        //console.log("i = ", i);
+        //console.log("index = ", index);
         // Validate item is defined before adding.
-        if (arr.indexOf(item) == -1 && !(item === "undefined"))
+        if (arr.indexOf(item) == -1 && (item !== "undefined"))
             arr.push(item);
+        
+        //console.log("item = ", item);
     }
+    
+    //console.log("array = ", arr);
+    //console.log("csvArray = ", csvArray);
     
     return arr;
 }
@@ -61,10 +68,14 @@ function csvToControlChartData(chartData) {
     var INCIDENCE_COL = chartData.INCIDENCE_COL;
     var X_COL = chartData.X_COL;
     var GROUP_COL = chartData.GROUP_COL;
+    var GROUPS = chartData.GROUPS;
+    var XLABELS = chartData.XLABELS;
     var START = chartData.START;
     var END = chartData.END;
     
     var dataset = [];
+    
+    var global_climits = false;
     
     var y_count = 0;
     var y_sum = 0;
@@ -73,18 +84,23 @@ function csvToControlChartData(chartData) {
     var incidence_sum = 0;
     var incidence_count = 0;
     
-    var variance_sum = 0;
+    var variance = 0;
+    var stdev = 0;
     
     var min = Infinity;
     var max = -Infinity;
     
     // Create Data Object
-    for (var i = 0; i < groups.length; i++) {
+    //for (var i = 0; i < groups.length; i++)
+    for (var i = 0; i < GROUPS.length; i++) {
         var arr = [];
-        for (var j = 0; j < xLabels.length; j++) {
+        //for (var j = 0; j < xLabels.length; j++)
+        for (var j = 0; j < XLABELS.length; j++) {
             arr.push({
-                x_axis: xLabels[j],
-                group: groups[i],
+                //x_axis: xLabels[j],
+                //group: groups[i],
+                x_axis: XLABELS[j],
+                group: GROUPS[i],
                 incidences: 0,
                 sample_size: 0,
                 percentage: 0,
@@ -106,8 +122,10 @@ function csvToControlChartData(chartData) {
         var SAMPLE_VAL = parseFloat(item[SAMPLE_COL]);
         var INCIDENCE_VAL = parseFloat(item[INCIDENCE_COL]);
         
-        var groupIndex = groups.indexOf(group);
-        var xIndex = xLabels.indexOf(X_VAL);
+        //var groupIndex = groups.indexOf(group);
+        var groupIndex = GROUPS.indexOf(group);
+        //var xIndex = xLabels.indexOf(X_VAL);
+        var xIndex = XLABELS.indexOf(X_VAL);
         
         if (groupIndex > -1 && xIndex > -1) {
             if (!isNaN(Y_VAL)) {
@@ -133,30 +151,39 @@ function csvToControlChartData(chartData) {
                 incidence_count++;
             }
         } else {
-            console.log("SKIPPED ROW!!");
+            //console.log("SKIPPED ROW!!");
         }
     }
     
     var avg = 0;
     //console.log("incidence_sum = ", incidence_sum);
     //console.log("sample_sum = ", sample_sum);
-    if (sample_sum !== 0 && !isNaN(sample_sum) && !isNaN(incidence_sum))
-        avg = incidence_sum / sample_sum;
-    // This else if may be useless
-    else if (y_count !== 0 && !isNaN(y_sum) && !isNaN(y_count))
-        avg = y_sum / y_count;
+    //if (sample_sum !== 0 && !isNaN(sample_sum) && !isNaN(incidence_sum))
+    //    avg = incidence_sum / sample_sum;
+    //else if (y_count !== 0 && !isNaN(y_sum) && !isNaN(y_count))
+    //    avg = y_sum / y_count;
     
-    var global_lim = (3*Math.sqrt((avg*(1-avg))/(sample_sum/groups.length)));
+    //var global_lim = (3*Math.sqrt((avg*(1-avg))/(sample_sum/groups.length)));
+    var global_lim = (3*Math.sqrt((avg*(1-avg))/(sample_sum/GROUPS.length)));
     var global_ucl = 100 * (avg + global_lim);
     var global_lcl = 100 * (avg - global_lim);
     
-    if (avg !== 0) {
+    //if (avg !== 0)
+    if (sample_sum !== 0 && !isNaN(sample_sum) && !isNaN(incidence_sum)) {
+        avg = incidence_sum / sample_sum;
     
         // Calculate Control Limits of p-chart
         for (var i = 0; i < dataset.length; i++) {
             var item = dataset[i];
             for (var j = 0; j < item.length; j++) {
-                var lim = (3*Math.sqrt((avg*(1-avg))/item[j].sample_size));
+                var ss = item[j].sample_size;
+            
+                if (item[j].percentage == 0) {
+                    if (ss == 0) item[j].percentage = 0;
+                    else item[j].percentage = 100 * (item[j].incidences / ss);
+                }
+            
+                var lim = (3*Math.sqrt((avg*(1-avg))/ss));
                 var ucl = avg + lim;
                 var lcl = avg - lim;
                 
@@ -175,9 +202,32 @@ function csvToControlChartData(chartData) {
         }
         
         avg = avg * 100;
+    } else if (y_count !== 0 && !isNaN(y_sum) && !isNaN(y_count)) {
+        avg = y_sum / y_count;
+        var variance_sum = 0;
+        
+        // Calculate Control Limits of p-chart
+        for (var i = 0; i < dataset.length; i++) {
+            var item = dataset[i];
+            for (var j = 0; j < item.length; j++) {
+            
+                variance_sum += ((item[j].percentage - avg) * (item[j].percentage - avg));
+            }
+        }
+        
+        var variance = variance_sum / (dataset.length)  // Population Statistics
+        //variance = variance_sum / (dataset.length - 1)  // Sample Statistics
+        stdev = Math.sqrt(variance);
+        
+        var lim = 3 * stdev;
+        
+        global_ucl = avg + lim;
+        global_lcl = avg - lim;
+        
+        global_climits = true;
     }
     
-    return { data: dataset, avg: avg, max: max, min: min, ucl: global_ucl, lcl: global_lcl };
+    return { data: dataset, avg: avg, max: max, min: min, ucl: global_ucl, lcl: global_lcl, groups: GROUPS, xLabels: XLABELS, global_climits: global_climits, stdev: stdev, variance: variance };
 }
 
 function drawControlChart(dataObj, chartObj) {
@@ -194,6 +244,11 @@ function drawControlChart(dataObj, chartObj) {
     var max = dataObj.max;
     var ucl = dataObj.ucl;
     var lcl = dataObj.lcl;
+    var GROUPS = dataObj.groups;
+    var XLABELS = dataObj.xLabels;
+    var global_climits = dataObj.global_climits;
+    var stdev = dataObj.stdev;
+    var variance_data = dataObj.variance;
     
     //var interval = dataObj.interval;
     //var print_percent = max == -Infinity ? true : false;
@@ -209,7 +264,9 @@ function drawControlChart(dataObj, chartObj) {
     
     //var x = d3.time.scale()
     //          .range([0, width]);
-    var x = d3.scale.ordinal().rangeBands([0, width]);
+    //var x = d3.scale.ordinal().rangeBands([0, width]);
+    //var x = d3.scale.ordinal().rangeRoundBands([0, width], 0.2);
+    var x = d3.scale.ordinal().rangePoints([0, width]);
     
     var y = d3.scale.linear()
               .range([height, 0]);
@@ -224,11 +281,13 @@ function drawControlChart(dataObj, chartObj) {
     
     //var color = d3.scale.ordinal()
 	//                      .range(randomColor({ count: data.length, hue: 'blue' }));
-    var color = data.length;
-    if (color == 1)
-        color = d3.scale.ordinal().range(randomColor({ count: data.length, hue: 'blue', luminosity: 'dark' }));
-    else
-        color = d3.scale.ordinal().range(randomColor({ count: data.length, luminosity: 'bright' }));
+    //var color = data.length;
+    //if (color == 1)
+    //    color = d3.scale.ordinal().range(randomColor({ count: data.length, hue: 'blue', luminosity: 'dark' }));
+    //else
+    //    color = d3.scale.ordinal().range(randomColor({ count: data.length, luminosity: 'bright' }));
+    var color = d3.scale.category10();
+    color.domain(GROUPS);
     
     
     var svg = d3.select(selector).append("svg")
@@ -241,7 +300,8 @@ function drawControlChart(dataObj, chartObj) {
     
     var line = d3.svg.line()
                  .interpolate("linear")
-                 .x(function (d) { return x(d.x_axis) + 47; })
+                 .x(function (d) { return x(d.x_axis); })
+                 //.x(function (d) { return x(d.x_axis) + xAxis.rangeBands(); })
                  .y(function (d) { return y(d.percentage); });
     
     
@@ -252,19 +312,27 @@ function drawControlChart(dataObj, chartObj) {
     // Set X Domain
     //x.domain([data[0][0].date, data[0][data[0].length-1].date]);
     //var xAxisLabels = xLabels.unshift("");
-    x.domain(xLabels);
+    //x.domain(xLabels);
+    x.domain(XLABELS);
     
     // Set Y Domain (including Control Limits)
     var max_percent = d3.max(data, function (d) { return (d3.max(d, function (d) { return d.percentage; })); });
-    var max_ucl = d3.max(data, function (d) { return (d3.max(d, function (d) { return d.ucl; })); });
     var min_percent = d3.min(data, function (d) { return (d3.min(d, function (d) { return d.percentage; })); });
-    var min_ucl = d3.min(data, function (d) { return (d3.min(d, function (d) { return d.ucl; })); });
-    
     if (max_percent > max) max = max_percent;
-    if (max_ucl > max) max = max_ucl;
+    if (min_percent < min) min = min_percent;
     
-    if (min_percent > min) min = min_percent;
-    if (min_ucl > min) min = min_ucl;
+    if (global_climits) {
+        if (ucl > max) max = ucl;
+        
+        if (lcl < min) min = lcl;
+    } else {
+        var max_ucl = d3.max(data, function (d) { return (d3.max(d, function (d) { return d.ucl; })); });
+        var min_lcl = d3.min(data, function (d) { return (d3.min(d, function (d) { return d.lcl; })); });
+        
+        if (max_ucl > max) max = max_ucl;
+        
+        if (min_lcl < min) min = min_lcl;
+    }
     
     //if (print_percent) max = d3.max(data, function (d) { return (d3.max(d, function (d) { return d.ucl; })); });
     //if (ucl > max) max = ucl;
@@ -293,8 +361,7 @@ function drawControlChart(dataObj, chartObj) {
         .attr('y', 30)
         .attr('dy', '.71em')
         .style('text-anchor', 'middle')
-        //.style('font-size', '14px')
-        .style('font-size', '11px')
+        .style('font-size', '14px')
         .text(label.xAxis);
     
     // draw y-axis
@@ -304,18 +371,20 @@ function drawControlChart(dataObj, chartObj) {
         .append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", "-50")
-        .attr("x", -(height / 4))
+        .attr("x", -(height / 2))
         .attr("dy", ".71em")
         .style("text-anchor", "end")
-        //.style('font-size', '14px')
-        .style('font-size', '11px')
+        .style('font-size', '14px')
         .text(label.yAxis);
     
     // Draw center line to indicate mean.
     svg.append("svg:line")
-        .attr("x1", x(xLabels[0]) + 47)
+        //.attr("x1", x(xLabels[0]) + 47)
+        //.attr("x1", x(XLABELS[0]) + 47)
+        .attr("x1", x(0))
         .attr("y1", y(avg))
-        .attr("x2", x(xLabels[xLabels.length-1]) + 47)
+        .attr("x2", x(xLabels[xLabels.length-1]))
+        //.attr("x2", x(XLABELS[XLABELS.length-1]) + xAxis.rangeBands())
         .attr("y2", y(avg))
         .style("stroke", "rgba(0, 165, 46, 0.6)")
         .style("stroke-width", 2)
@@ -346,7 +415,7 @@ function drawControlChart(dataObj, chartObj) {
                 return "rgba(220, 55, 41, 0.8)";
               else
                 return color (i / (data.length-1));
-        }).attr("cx", function (d) { return x(d.x_axis) + 47; })
+        }).attr("cx", function (d) { return x(d.x_axis); })
         .attr("cy", function (d) { return y(d.percentage); })
         .attr("r", 3)
         .on("mouseover", function (d, i) {
@@ -373,7 +442,25 @@ function drawControlChart(dataObj, chartObj) {
         });
     }
     
-    if (data.length == 1) {
+    if (global_climits) {
+        // upper limit line
+        svg.append("line")
+            .attr("class", "limit-line")
+            .attr("stroke", "#000")
+            .attr({ x1: 0, y1: y(ucl), x2: width, y2: y(ucl) });
+        svg.append("text")
+            .attr({ x: width + 5, y: y(ucl) + 4 })
+            .text("UCL: " + ucl.toFixed(2));
+        
+        // lower limit line
+        svg.append("line")
+            .attr("class", "limit-line")
+            .attr("stroke", "#000")
+            .attr({ x1: 0, y1: y(lcl), x2: width, y2: y(lcl) });
+        svg.append("text")
+            .attr({ x: width + 5, y: y(lcl) + 4 })
+            .text("LCL: " + lcl.toFixed(2));
+    } else {
         // upper limit line
         var upper_limit_line = d3.svg.line()
                                  .x(function (d) { return x(d.x_axis); })
@@ -386,31 +473,87 @@ function drawControlChart(dataObj, chartObj) {
                                  .y(function (d) { return y(d.lcl); })
                                  .interpolate("linear");
                                  //.interpolate("step-before");
-        svg.append("svg:path")
-           .attr("class", "limit-line")
-           .attr("fill", "none")
-           .attr("d", upper_limit_line(data[0]));
-        svg.append("svg:path")
-           .attr("class", "limit-line")
-           .attr("fill", "none")
-           .attr("d", lower_limit_line(data[0]));
-    } else {
-        // upper limit line
-        svg.append("line")
-        .attr("class", "limit-line")
-        .attr({ x1: 0, y1: y(ucl), x2: width, y2: y(ucl) });
-        svg.append("text")
-        .attr({ x: width + 5, y: y(ucl) + 4 })
-        .text("UCL: " + ucl.toFixed(2));
-        
-        // lower limit line
-        svg.append("line")
-        .attr("class", "limit-line")
-        .attr({ x1: 0, y1: y(lcl), x2: width, y2: y(lcl) });
-        svg.append("text")
-        .attr({ x: width + 5, y: y(lcl) + 4 })
-        .text("LCL: " + lcl.toFixed(2));
+        for (var i = 0; i < data.length; i++) {
+            svg.append("svg:path")
+               .attr("class", "limit-line")
+               .attr("fill", "none")
+               .attr("stroke", color (i / (data.length-1)))
+               //.attr("display", "none")
+               .attr("d", upper_limit_line(data[i]));
+            svg.append("svg:path")
+               .attr("class", "limit-line")
+               .attr("fill", "none")
+               .attr("stroke", color (i / (data.length-1)))
+               //.attr("display", "none")
+               .attr("d", lower_limit_line(data[i]));
+        }
     }
+    //if (data.length == 1) {
+    //    // upper limit line
+    //    var upper_limit_line = d3.svg.line()
+    //                             .x(function (d) { return x(d.x_axis); })
+    //                             .y(function (d) { return y(d.ucl); })
+    //                             .interpolate("linear");
+    //                            //.interpolate("step-before");
+    //    // lower limit line
+    //    var lower_limit_line = d3.svg.line()
+    //                             .x(function (d) { return x(d.x_axis); })
+    //                             .y(function (d) { return y(d.lcl); })
+    //                             .interpolate("linear");
+    //                             //.interpolate("step-before");
+    //    svg.append("svg:path")
+    //       .attr("class", "limit-line")
+    //       .attr("fill", "none")
+    //       .attr("stroke", "#000")
+    //       .attr("d", upper_limit_line(data[0]));
+    //    svg.append("svg:path")
+    //       .attr("class", "limit-line")
+    //       .attr("fill", "none")
+    //       .attr("stroke", "#000") 
+    //       .attr("d", lower_limit_line(data[0]));
+    //} else {
+    //    // upper limit line
+    //    var upper_limit_line = d3.svg.line()
+    //                             .x(function (d) { return x(d.x_axis); })
+    //                             .y(function (d) { return y(d.ucl); })
+    //                             .interpolate("linear");
+    //                            //.interpolate("step-before");
+    //    // lower limit line
+    //    var lower_limit_line = d3.svg.line()
+    //                             .x(function (d) { return x(d.x_axis); })
+    //                             .y(function (d) { return y(d.lcl); })
+    //                             .interpolate("linear");
+    //                             //.interpolate("step-before");
+    //    for (var i = 0; i < data.length; i++) {
+    //        svg.append("svg:path")
+    //           .attr("class", "limit-line")
+    //           .attr("fill", "none")
+    //           .attr("stroke", color (i / (data.length-1)))
+    //           //.attr("display", "none")
+    //           .attr("d", upper_limit_line(data[i]));
+    //        svg.append("svg:path")
+    //           .attr("class", "limit-line")
+    //           .attr("fill", "none")
+    //           .attr("stroke", color (i / (data.length-1)))
+    //           //.attr("display", "none")
+    //           .attr("d", lower_limit_line(data[i]));
+    //    }
+    //    //// upper limit line
+    //    //svg.append("line")
+    //    //.attr("class", "limit-line")
+    //    //.attr({ x1: 0, y1: y(ucl), x2: width, y2: y(ucl) });
+    //    //svg.append("text")
+    //    //.attr({ x: width + 5, y: y(ucl) + 4 })
+    //    //.text("UCL: " + ucl.toFixed(2));
+    //    //
+    //    //// lower limit line
+    //    //svg.append("line")
+    //    //.attr("class", "limit-line")
+    //    //.attr({ x1: 0, y1: y(lcl), x2: width, y2: y(lcl) });
+    //    //svg.append("text")
+    //    //.attr({ x: width + 5, y: y(lcl) + 4 })
+    //    //.text("LCL: " + lcl.toFixed(2));
+    //}
     
     
     // draw title
@@ -419,8 +562,8 @@ function drawControlChart(dataObj, chartObj) {
         .attr("y", 0 - (margin.top / 2))
         .attr("text-anchor", "middle")
         .attr("class", "no-data")
-        //.style("font-size", '18px')
-        .style("font-size", "14px")
+        .style("font-size", '18px')
+        //.style("font-size", "14px")
         .style("font-weight", "bold")
         .text(label.chartTitle);
     
@@ -441,17 +584,19 @@ function drawControlChart(dataObj, chartObj) {
         var legend = svg;
         
        legend = svg.selectAll(".legend")
-                    .data(groups)
+                    //.data(groups)
+                    .data(GROUPS)
                     .enter().append("g")
                     .attr("class", "legend")
                     .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
        
        legend.append("rect")
-            .attr("x", width - 18)
+            .attr("x", width + 18)
             .attr("y", 11)
             .attr("width", 18)
             .attr("height", 18)
-            .style("fill", function (d, i) { return color(i / (xLabels.length - 1)); });
+            //.style("fill", function (d, i) { return color(i / (xLabels.length - 1)); });
+            .style("fill", function (d, i) { return color(i / (data.length - 1)); });
        //.style("fill", color(i / (data.length - 1)));
        //.style("fill", ["#4682b4", "#dc1e50"]);
        //.style("fill", ["rgba(70, 130, 180, 1.0)", "rgba(220, 30, 80, 0.4)"]);
@@ -459,7 +604,8 @@ function drawControlChart(dataObj, chartObj) {
         legend.append("text")
         //.attr("x", width - 24)
         // Translation Formula = y = 1.0982x + 4.1833
-        .attr("x", 800)
+        //.attr("x", 800)
+        .attr("x", width + 58)
         .attr("y", 20)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
@@ -501,8 +647,10 @@ function csvToFunnelChartData(chartData) {
     var INCIDENCE_COL = chartData.INCIDENCE_COL;
     var X_COL = chartData.X_COL;
     var GROUP_COL = chartData.GROUP_COL;
-    var START = chartData.START;
-    var END = chartData.END;
+    var GROUPS = chartData.GROUPS;
+    var XLABELS = chartData.XLABELS;
+    //var START = chartData.START;
+    //var END = chartData.END;
     
     
     var dataset = [];
@@ -514,9 +662,11 @@ function csvToFunnelChartData(chartData) {
     var min = Infinity;
     
     // Create Data Object
-    for (var i = 0; i < groups.length; i++) {
+    //for (var i = 0; i < groups.length; i++) {
+    for (var i = 0; i < GROUPS.length; i++) {
         dataset.push({
-            group: groups[i],
+            //group: groups[i],
+            group: GROUPS[i],
             incidences: 0,
             sample_size: 0,
             percentage: 0,
@@ -535,34 +685,38 @@ function csvToFunnelChartData(chartData) {
         var SAMPLE_VAL = parseFloat(item[SAMPLE_COL]);
         var INCIDENCE_VAL = parseFloat(item[INCIDENCE_COL]);
         
-        var groupIndex = groups.indexOf(group);
+        //var groupIndex = groups.indexOf(group);
+        var groupIndex = GROUPS.indexOf(group);
+        var xLabelsIndex = XLABELS.indexOf(X_VAL);
         
         if (groupIndex > -1) {
-            if (!isNaN(Y_VAL)) {
-                dataset[groupIndex].percentage += Y_VAL;
-                dataset[groupIndex].percentage_vals.push(Y_VAL);
-                //y_sum += Y_VAL;
-                //y_count++;
-                if (Y_VAL > max) max = Y_VAL;
-                if (Y_VAL < min) min = Y_VAL;
-                
-                //console.log("Y_VAL = ", Y_VAL);
-                //console.log("max = ", max);
-                //console.log("min = ", min);
-            }
-            if (!isNaN(SAMPLE_VAL)) {
-                dataset[groupIndex].sample_size += SAMPLE_VAL;
-                //console.log("SAMPLE_VAL = ", SAMPLE_VAL);
-                //sample_sum += SAMPLE_VAL;
-                //sample_count++;
-                
-                total_population += SAMPLE_VAL;
-            }
-            if (!isNaN(INCIDENCE_VAL)) {
-                dataset[groupIndex].incidences += INCIDENCE_VAL;
-                incidence_population += INCIDENCE_VAL;
-                //incidence_sum += INCIDENCE_VAL;
-                //incidence_count++;
+            if (xLabelsIndex > -1) {
+                if (!isNaN(Y_VAL)) {
+                    dataset[groupIndex].percentage += Y_VAL;
+                    dataset[groupIndex].percentage_vals.push(Y_VAL);
+                    //y_sum += Y_VAL;
+                    //y_count++;
+                    if (Y_VAL > max) max = Y_VAL;
+                    if (Y_VAL < min) min = Y_VAL;
+                    
+                    //console.log("Y_VAL = ", Y_VAL);
+                    //console.log("max = ", max);
+                    //console.log("min = ", min);
+                }
+                if (!isNaN(SAMPLE_VAL)) {
+                    dataset[groupIndex].sample_size += SAMPLE_VAL;
+                    //console.log("SAMPLE_VAL = ", SAMPLE_VAL);
+                    //sample_sum += SAMPLE_VAL;
+                    //sample_count++;
+                    
+                    total_population += SAMPLE_VAL;
+                }
+                if (!isNaN(INCIDENCE_VAL)) {
+                    dataset[groupIndex].incidences += INCIDENCE_VAL;
+                    incidence_population += INCIDENCE_VAL;
+                    //incidence_sum += INCIDENCE_VAL;
+                    //incidence_count++;
+                }
             }
         } else {
             console.log("SKIPPED ROW!!");
@@ -612,9 +766,19 @@ function drawFunnelChart(data, chartObj) {
     var dataset = data.data;
     var sorted_groups = data.groups;
     var avg = data.avg;
+    //var GROUPS = data.groups;
+    //var XLABELS = data.xLabels;
     
-    console.log("Funnel Plot Title = ", title.chartTitle);
-    console.log("Funnel Plot Data = ", data);
+    //console.log("Funnel Plot Title = ", title.chartTitle);
+    //console.log("Funnel Plot Data = ", data);
+    
+    // Remove any items that have a population of 0
+    for (var i = dataset.length-1; i >= 0; i--) {
+        if (dataset[i].sample_size == 0) {
+            dataset.splice(i, 1);
+            sorted_groups.splice(i, 1);
+        }
+    }
     
     var padding = 30;
     
@@ -667,8 +831,7 @@ function drawFunnelChart(data, chartObj) {
         .attr('y', 30)
         .attr('dy', '.71em')
         .style('text-anchor', 'middle')
-        //.style('font-size', '14px')
-        .style('font-size', '11px')
+        .style('font-size', '14px')
         .text(title.xAxis);
     
     // draw y-axis
@@ -678,12 +841,11 @@ function drawFunnelChart(data, chartObj) {
         .call(yAxis)
         .append('text')
         .attr('transform', 'rotate(-90)')
-        .attr('y', '-50')
-        .attr('x', -(height / 4))
+        .attr('y', 0 - margin.left )
+        .attr('x', -(height / 2))
         .attr('dy', '.71em')
-        .style('text-anchor', 'end')
-        //.style('font-size', '14px')
-        .style('font-size', '11px')
+        .style('text-anchor', 'middle')
+        .style('font-size', '14px')
         .text(title.yAxis);
     
     // draw title
@@ -691,8 +853,7 @@ function drawFunnelChart(data, chartObj) {
         .attr("x", width / 2)
         .attr("y", 0 + (margin.top / 2))
         .attr("text-anchor", "middle")
-        //.style("font-size", '18px')
-        .style("font-size", '14px')
+        .style("font-size", '18px')
         .style("font-weight", "bold")
         .text(title.chartTitle);
     
@@ -808,4 +969,18 @@ function drawFunnelChart(data, chartObj) {
         }).on("mouseout", function (d, i) {
               tooltip.transition().duration(100).style("opacity", 1e-6);
         });
+    
+    // If there isn't any data, show messsage
+    if (dataset.length == 0) {
+        svg.append('text')
+           .attr("x", width / 2)
+           .attr("y", height / 2)
+           .attr("text-anchor", "middle")
+           .attr("class", "no-data")
+           .style("font-size", "20px")
+           .text("No Data Available");
+        
+        $(selector + " svg g :not(.no-data)").hide();
+        //$(selector).closest('.chart-container').find('.date-toggle').hide();
+    }
 }

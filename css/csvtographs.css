@@ -1,4 +1,20 @@
 html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
+    body { background: url("./images/noisy_grid.png"); }
 
     h1, h2, h3, h4, h5, h6 { font-family: 'Ubuntu', sans-serif; }
     a, p, div { font-family: 'Ubuntu', sans-serif; }
+    
+    .panel-body { min-height: 215px; max-height: 215px; }
+    
+    .ib { display: inline-block; width: 100%; }
+
+    #help-tab { background-color: white; border-radius: 5px; }
+        #help-nav-tabs { margin-left: 15px; }
+            #help-nav-tabs h4 { color: #255c9d; }
+                #help-tab img { width: 100%; height: 100%; margin: 10px; border: 1px solid black; border-radius: 5px; }
+                .logos { width: 50px !important; height 50px !important; }
+                
+                
+    svg:not(:root) { overflow: visible !important; }
+    
+    #print-page-btn { height: 50px; }

@@ -9,6 +9,8 @@
  */
 
 $(document).ready(function () {
+
+    // Read CSV File and load data into 'csvArray'
     var errorCount = 0;
     $("#csvfile").change(function (e) {
         errorCount++;
@@ -49,6 +51,66 @@ $(document).ready(function () {
         
     });
     
+    // Handle Main Menu Tab Navigation
+    $("ul.navbar-nav li").click(function (e) {
+        e.preventDefault();
+        var index = $(this).index();
+        
+        $(this).addClass("active").siblings().removeClass("active");
+        if (index == 0) {
+            $("#home-tab").show();
+            $("#help-tab").hide();
+        } else if (index == 1) {
+            $("#help-tab").show();
+            $("#home-tab").hide();
+        }
+        
+        return false;
+    });
+    
+    // Handle Help Tab Navigation
+    $("#help-nav li").click(function (e) {
+        e.preventDefault();
+        $(this).addClass("active").siblings().removeClass("active");
+        
+        var index = $(this).index();
+        
+        $("#help-nav-tabs").children().hide();
+        
+        if (index == 0) {
+            $("#help-gstart-tab").show();
+        } else if (index == 1) {
+            $("#help-charts-tab").show();
+        } else if (index == 2) {
+            $("#help-faqs-tab").show();
+        }
+        
+        return false;
+    });
+    
+    // Handle Switching Chart Type dropdown (for UI)
+    $("#chart-type-select").change(function () {
+        var chartType = $(this).val();
+            
+        $("#y-select-div, #incidences-select-div, #population-select-div").hide();
+        
+        if (chartType == "control") {
+            $("#control-chart-type-div").show();
+            var cType = $('input[name="control-type"]').val();
+            
+            if(cType == "x") {
+                $("#y-select-div").show();
+            } else if (cType == "p") {
+                $("#incidences-select-div, #population-select-div").show();
+            }
+        } else {
+            $("#control-chart-type-div").hide();
+            $("#incidences-select-div, #population-select-div").show();
+        }
+    });
+    $("#x-chart-radio").click(function () { $("#incidences-select-div, #population-select-div").hide(); $("#y-select-div").show(); });
+    $("#p-chart-radio").click(function () { $("#incidences-select-div, #population-select-div").show(); $("#y-select-div").hide(); });
+    
     // populate #datasets-select with all groups
     $("#group-by-select").change(function () {
         if($(this).find("option:selected").text() == "Select One") {
@@ -69,15 +131,27 @@ $(document).ready(function () {
         }
     });
     
-    $("#x-select").change(function() {
+    // populate #x-labels-select with all x axis labels
+    $("#x-select").change(function () {
         if($(this).find("option:selected").text() == "Select One") {
-            // Do Nothing
+            // Do Not Group Data
+            $("#x-labels-select").html('<option value="all">Show All</option>');
         } else {
             var index = parseInt($(this).val());
-            xLabels = ExtractFromCSV(index)
+            
+            //ExtractGroupFromCSV(index);
+            xLabels = ExtractFromCSV(index);
+            
+            var xlabels_html = '<option value="all">Show All</option>';
+            for (var i = 0; i < xLabels.length; i++) {
+                xlabels_html += '<option value="' + xLabels[i] + '">' + xLabels[i] + '</option>';
+            }
+            
+            $("#x-labels-select").html(xlabels_html);
         }
     });
     
+    // Creating Charts
     $("#create-chart-btn").click(function (e) {
         e.preventDefault();
         
@@ -96,6 +170,30 @@ $(document).ready(function () {
         var yAxisCol = $("#y-select").val();
         var populationCol = $("#population-select").val();
         var incidencesCol = $("#incidences-select").val();
+        var xlbls = $("#x-labels-select").val();
+        if (xlbls[0] == "all") {
+            var arr = [];
+            $("#x-labels-select option").each(function () {
+                arr.push($(this).val());
+            });
+            arr.splice(0,1);
+            xlbls = arr;
+        }
+        var grps = $("#datasets-select").val();
+        if (grps[0] == "all") {
+            var arr = [];
+            $("#datasets-select option").each(function () {
+                arr.push($(this).val());
+            });
+            arr.splice(0,1);
+            grps = arr;
+        }
+        
+        var chartLabels = {
+            xAxis: $("#xaxis-title-text").val(),
+            yAxis: $("#yaxis-title-text").val(),
+            chartTitle: $("#chart-title-text").val()
+        };
         
         if (chartType == "control") {
             var data = csvToControlChartData({
@@ -103,17 +201,19 @@ $(document).ready(function () {
                             X_COL: xAxisCol,
                             SAMPLE_COL: populationCol,
                             INCIDENCE_COL: incidencesCol,
-                            GROUP_COL: groupCol
+                            GROUP_COL: groupCol,
+                            GROUPS: grps,
+                            XLABELS: xlbls
                                  });
             //console.log(data);
             
             $("#chartDiv").empty();
             
             // Draw Chart
-            var chartOpts = { label: { xAxis: "Year", yAxis: "% of Infections", chartTitle: "Infection Population" },
+            var chartOpts = { label: chartLabels,
                               width: 760,
                               height: 400,
-                              margin: { left: 80, right: 60, top: 20, bottom: 50 },
+                              margin: { left: 100, right: 60, top: 20, bottom: 50 },
                               selector: "#chartDiv" };
                               
             drawControlChart(data, chartOpts);
@@ -123,17 +223,21 @@ $(document).ready(function () {
                             X_COL: xAxisCol,
                             SAMPLE_COL: populationCol,
                             INCIDENCE_COL: incidencesCol,
-                            GROUP_COL: groupCol
+                            GROUP_COL: groupCol,
+                            GROUPS: grps,
+                            XLABELS: xlbls
                                  });
             //console.log(data);
             
             $("#chartDiv").empty();
             
+            var margin = { left: 60, right: 10, top: 30, bottom: 50 }
+            
             // Draw Chart
-            var chartOpts = { label: { xAxis: "Population", yAxis: "% of Infections", chartTitle: "Infection Population by Group" },
+            var chartOpts = { label: chartLabels,
+                              margin: margin,
                               width: 760,
                               height: 400,
-                              margin: { left: 80, right: 60, top: 20, bottom: 50 },
                               selector: "#chartDiv" };
                               
             drawFunnelChart(data, chartOpts);
@@ -141,5 +245,9 @@ $(document).ready(function () {
         
         return false;
     });
-                  
+    
+    // Handle Print Button
+    $("#print-page-btn").click(function () {
+        $(".print-area").printArea();
+    });
 });

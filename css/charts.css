@@ -8,7 +8,7 @@
 }
 
 .limit-line {
-  stroke: #000;
+  //stroke: #000;
   stroke-width: 1px;
   stroke-dasharray: 5, 5;
 }

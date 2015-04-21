@@ -62,8 +62,10 @@
                 </div>
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#">Home</a></li>
-                    <li><a href="#">Reports</a></li>
                     <li><a href="#">Help</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <button id="print-page-btn" class="btn btn-primary">Print</button>
                 </ul>
             </div>
         </nav>
@@ -80,68 +82,328 @@
                     </ul>
                 </div>
             </div>
+            <div id="help-nav-tabs">
+                <div id="help-gstart-tab">
+                    <div class="row">
+                        <br />
+                        <div class="col-md-12">
+                            <div class="well well-sm">
+                                <a onclick="$(document).scrollTop($('#h4-gstart').offset().top - 75); return false;" href="#">Getting Started</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-data').offset().top - 75); return false;" href="#">Selecting a Data File</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-ctype').offset().top - 75); return false;" href="#">Choosing a Chart Type</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-mult-select').offset().top -75); return false;" href="#">Selecting Labels or Groups</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-labels').offset().top -75); return false;" href="#">Setting the Chart Title and Axis Labels</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-chart').offset().top -75); return false;" href="#">Creating the Charts</a>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-gstart">Getting Started</h4>
+                            <p>This web application is optimized to work with Google Chrome.</p>
+                            <p>This will not work in Internet Explorer!</p>
+                            <p>Before you can, ensure you have a .CSV file in the proper format.</p>
+                            <br />
+                            <a href="./data/VON_DATA.csv">Here is a link to a sample data file.</a>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row" style="display: inline">
+                                <div class="ib">
+                                    <div class="col-md-4">
+                                        <h3>Chrome</h3>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <img width="50" height="50" class="logos" src="./img/chrome_logo.png" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h3>&#x2713;</h3>
+                                    </div>
+                                </div>
+                                <div class="ib">
+                                    <div class="col-md-4">
+                                        <h3>IE</h3>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <img width="50" height="50" class="logos" src="./img/ie_logo.png" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h3>&#x2717;</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-data">Selecting a Data File</h4>
+                            <p>Click on 'Choose File' and select a <strong>.CSV</strong> file from your computer.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="./img/help_csv.png" />
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-ctype">Choosing a Chart Type</h4>
+                            <p>You have the option of creating a Funnel Chart or a Control Chart by choosing an item from the highlighted dropdown menu.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="./img/help_ctype.png" />
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-mult-select">Selecting Labels (or Groups)</h4>
+                            <p>Select the column which contains the X Axis Labels.</p>
+                            <p>You can choose to show data for all items in the X Axis, or just the ones you specify.</p>
+                            <br />
+                            <p>The same selection method applies for sorting data into groups</p>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="./img/help_mult_select.png" />
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-labels">Setting the Chart Title and Axis Labels</h4>
+                            <p>Change the first highlighted input to set your Chart Title</p>
+                            <p>The next two highlighted inputs will set the X- and Y-Axis labels, respectively.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="./img/help_labels.png" />
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-chart">Creating the Charts</h4>
+                            <p>Click the large blue button to create the chart!</p>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="./img/help_create_chart.png" />
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h2 style="text-align: center;">
+                                <a href="#" onclick="$('#help-nav li:nth-child(2) a').click(); window.scrollTo(0,0); return false;">Click here to go to the 'Charts and Graphs' section</a>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+                <div id="help-charts-tab" style="display: none;">
+                    <div class="row">
+                        <br>
+                        <div class="col-md-12">
+                            <div class="well well-sm">
+                                <a onclick="$(document).scrollTop($('#h4-control-chart').offset().top - 75); return false;" href="#">Control Charts</a> <br>
+                                <a onclick="$(document).scrollTop($('#h4-funnel-plot').offset().top - 75); return false;" href="#">Funnel Plots</a> <br>
+                                <a onclick="$(document).scrollTop($('#h4-tooltip').offset().top -75); return false;" href="#">Tool Tips</a> <br>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-control-chart">Control Charts</h4>
+                            <p>The <strong>mean</strong> is the green center line.</p>
+                            <p>The <strong>control limits</strong> (dashed lines) are 3σ away from the mean.</p>
+                            <p>Data points that fall outside the control limits are colored red.</p>
+                            <br>
+                            <p>Placing your cursor over any data point or center line will reveal a <a onclick="$(document).scrollTop($('#h4-tooltip').offset().top - 75); return false;" class="a-tooltip" href="#">tooltip</a></p>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="./img/help_control.png">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-funnel-plot">Funnel Plots</h4>
+                            <p>The <strong>mean</strong> is the green center line.</p>
+                            <p>The <strong>inner control limits</strong> (with long dashed lines) represent the 99.9 % confidence interval.</p>
+                            <p>The <strong>outer control limits</strong> (with short dashed lines)represent the 95 % confidence interval.</p>
+                            <br>
+                            <p>Placing your cursor over any data point or center line will reveal a <a onclick="$(document).scrollTop($('#h4-tooltip').offset().top - 75); return false;" class="a-tooltip" href="#">tooltip</a></p>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="./img/help_funnel.png">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-tooltip">Tool Tips</h4>
+                            <p>Placing your cursor over any data point or center line will reveal additional data for that point.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="./img/help_charts_tooltip.png">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h2 style="text-align: center;">
+                                <a href="#" onclick="$('#help-nav li:nth-child(3) a').click(); window.scrollTo(0,0); return false;">Click here to go to the 'FAQs / Troubleshooting' section</a>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+                <div id="help-faqs-tab" style="display: none;">
+                    <div class="row">
+                        <br />
+                        <div class="col-md-12">
+                            <div class="well well-sm">
+                                <a onclick="$(document).scrollTop($('#h4-csv-sample').offset().top - 75); return false;" href="#">Is there a sample CSV file I can use?</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-print-pdf').offset().top - 75); return false;" href="#">How do I print a chart to a PDF?</a> <br />
+                                <a onclick="$(document).scrollTop($('#h4-contact-us').offset().top - 75); return false;" href="#">Who can I contact if I have any questions?</a> <br />
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4 id="h4-csv-sample">Is there a sample CSV file I can use?</h4>
+                            <p>Yes!</p>
+                            <p>Right click on the link below and select 'Save As...' to download the sample data file</p>
+                            <br />
+                            <a href="./data/VON_DATA.csv">Here is a link to a sample data file.</a>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 id="h4-print-pdf">How do I print a chart to a PDF?</h4>
+                            <p>Click the print buttons on the top right.</p>
+                            <p>In Google Chrome, change your Printer Destination to '<strong>Save as PDF</strong>'</p>
+                            <p>In Mozilla FireFox, click the PDF drop down on the bottom left, and then select '<strong>Save as PDF...</strong>'</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-6">
+                                <img src="./img/help_chrome_pdf.png" />
+                            </div>
+                            <div class="col-md-6">
+                                <img src="./img/help_firefox_pdf.png" />
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4 id="h4-contact-us">Who can I contact if I have any questions?</h4>
+                            <h3>E-mail <a href="mailto:ratra.j@husky.neu.edu">Ratra.J@husky.neu.edu</a> if you encounter any issues or have any questions</h3>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+            </div>
         </div>
 <!-- /Help Tab -->
 
 <!-- Home Tab -->
         <div id="home-tab" class="print-container container tab">
 			<div class="row">
-			    <div class="col-md-4">
-                    <h3>Upload a CSV file to begin:</h3>
+                <div class="col-md-12">
+                    <img width="100%" src="./img/HSyE_icon_full.png" />
+                        <div>
+                            <h3 style="display: inline-block;">Upload a CSV file to begin:&emsp;&emsp;</h3>
+                            <input style="display: inline-block;" type="file" id="csvfile" />
+                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Chart Type:</h4>
+                        </div>
+                        <div class="panel-body">
+                            <select id="chart-type-select" class="form-control">
+                                <option value="0">Select One</option>
+                                <option value="control">Control Chart</option>
+                                <option value="funnel">Funnel Plot</option>
+                            </select>
+                            <br />
+                            <div id="control-chart-type-div" style="display: none;">
+                                <input id="x-chart-radio" name="control-type" value="x" type="radio" checked="checked" />&emsp;X-Bar Chart
+                                <br />
+                                <input id="p-chart-radio" name="control-type" value="p" type="radio" />&emsp;P Chart
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <input id="chart-title-text" placeholder="Chart Title" type="text" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+			    <div class="col-md-3">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">X-Axis Column:</h4>
+                        </div>
+                        <div class="panel-body">
+                            <select id="x-select" class="dataDrop form-control"></select>
+                            <select id="x-labels-select" class="form-control" multiple> </select>
+                        </div>
+                        <div class="panel-footer">
+                            <input id="xaxis-title-text" placeholder="X-Axis Label" type="text" class="form-control" />
+                        </div>
+                    </div>
 			    </div>
-			    <div class="col-md-4">
+			    <div class="col-md-3">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Y-Axis Column:</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div id="y-select-div">
+                                <select id="y-select" class="dataDrop form-control"></select>
+                            </div>
+                            <div id="incidences-select-div">
+                                <h4>Incidences:</h4>
+                                <select id="incidences-select" class="dataDrop form-control"> </select>
+                            </div>
+                            <div id="population-select-div">
+                                <h4>Population:</h4>
+                                <select id="population-select" class="dataDrop form-control"> </select>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <input id="yaxis-title-text" placeholder="Y-Axis Label" type="text" class="form-control" />
+                        </div>
+                    </div>
 			    </div>
-			    <div class="col-md-4">
+			    <div class="col-md-3">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Group Data By:</h4>
+                        </div>
+                        <div class="panel-body">
+                            <select id="group-by-select" class="dataDrop form-control"></select>
+                            <select id="datasets-select" class="form-control" multiple> </select>
+                        </div>
+                    </div>
 			    </div>
             </div>
             <div class="row">
                 <div class="col-md-3">
-                    <br />
-                    <input type="file" id="csvfile" />
-                </div>
-			    <div class="col-md-3">
-                    <h4>Group Data By:</h4>
-                    <select id="group-by-select" class="dataDrop form-control"></select>
-			    </div>
-			    <div class="col-md-3">
-                    <h4>X-Axis Column:</h4>
-                    <select id="x-select" class="dataDrop form-control"></select>
-			    </div>
-			    <div class="col-md-3">
-                    <h4>Y-Axis Column:</h4>
-                    <select id="y-select" class="dataDrop form-control"></select>
-			    </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <h4>Chart Type:</h4>
-                    <select id="chart-type-select" class="form-control">
-                        <option value="0">Select One</option>
-                        <option value="control">Control Chart</option>
-                        <option value="funnel">Funnel Plot</option>
-                    </select>
                 </div>
                 <div class="col-md-3">
-                    <h4>Data Sets:</h4>
-                    <select id="datasets-select" class="form-control" multiple>
-                        <option value="all">Show All</option>
-                    </select>
                 </div>
                 <div class="col-md-3">
-                    <h4>Population:</h4>
-                    <select id="population-select" class="dataDrop form-control">
-                    </select>
                 </div>
                 <div class="col-md-3">
-                    <h4>Incidences:</h4>
-                    <select id="incidences-select" class="dataDrop form-control">
-                    </select>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
                     <br />
-                    <button id="create-chart-btn" class="form-control btn btn-default">Create Chart</button>
+                    <button id="create-chart-btn" class="form-control btn btn-primary">Create Chart</button>
                 </div>
             </div>
             <div class="row">
@@ -149,7 +411,7 @@
                 </div>
                 <div class="col-md-10">
                     <br />
-                    <div id="chartDiv"></div>
+                    <div class="print-area" id="chartDiv"></div>
                 </div>
                 <div class="col-md-1">
                 </div>

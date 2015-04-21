@@ -1,0 +1,86 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		D017CA041AE2F65D00E4AD49 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+		D017CA051AE2F65D00E4AD49 /* css */ = {isa = PBXFileReference; lastKnownFileType = folder; path = css; sourceTree = "<group>"; };
+		D017CA061AE2F65D00E4AD49 /* img */ = {isa = PBXFileReference; lastKnownFileType = folder; path = img; sourceTree = "<group>"; };
+		D017CA071AE2F65D00E4AD49 /* js */ = {isa = PBXFileReference; lastKnownFileType = folder; path = js; sourceTree = "<group>"; };
+		D017CA081AE3031E00E4AD49 /* home.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = home.html; sourceTree = "<group>"; };
+		D017CA091AE3067C00E4AD49 /* csvtographs.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = csvtographs.css; path = css/csvtographs.css; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
+		D017CA0A1AE312E800E4AD49 /* csvtographs.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = csvtographs.js; path = js/csvtographs.js; sourceTree = "<group>"; };
+		D017CA0B1AE3251F00E4AD49 /* controlChart.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = controlChart.js; path = js/controlChart.js; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		D017C9FD1AE2F63F00E4AD49 = {
+			isa = PBXGroup;
+			children = (
+				D017CA0B1AE3251F00E4AD49 /* controlChart.js */,
+				D017CA0A1AE312E800E4AD49 /* csvtographs.js */,
+				D017CA091AE3067C00E4AD49 /* csvtographs.css */,
+				D017CA041AE2F65D00E4AD49 /* index.html */,
+				D017CA081AE3031E00E4AD49 /* home.html */,
+				D017CA051AE2F65D00E4AD49 /* css */,
+				D017CA061AE2F65D00E4AD49 /* img */,
+				D017CA071AE2F65D00E4AD49 /* js */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		D017C9FE1AE2F63F00E4AD49 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+			};
+			buildConfigurationList = D017CA011AE2F63F00E4AD49 /* Build configuration list for PBXProject "csvToGraphs" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = D017C9FD1AE2F63F00E4AD49;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		D017CA021AE2F63F00E4AD49 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		D017CA031AE2F63F00E4AD49 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D017CA011AE2F63F00E4AD49 /* Build configuration list for PBXProject "csvToGraphs" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D017CA021AE2F63F00E4AD49 /* Debug */,
+				D017CA031AE2F63F00E4AD49 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D017C9FE1AE2F63F00E4AD49 /* Project object */;
+}
